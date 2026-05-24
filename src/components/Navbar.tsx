@@ -7,8 +7,17 @@ const Bar = styled.header`
   top: 0;
   z-index: 10;
   backdrop-filter: blur(12px);
-  background: rgba(15, 17, 21, 0.78);
+  background: rgba(10, 13, 20, 0.78);
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+
+  /* Subtle gradient bleed echoing Eulerity's brand accents. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: ${({ theme }) => theme.gradients.surface};
+    pointer-events: none;
+  }
 `;
 
 const Inner = styled.div`
@@ -26,7 +35,18 @@ const Brand = styled(NavLink)`
   color: ${({ theme }) => theme.colors.text};
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  letter-spacing: -0.01em;
+
+  .mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: ${({ theme }) => theme.gradients.brand};
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+  }
   &:hover { color: ${({ theme }) => theme.colors.accent}; }
 `;
 
@@ -62,7 +82,8 @@ export function Navbar() {
     <Bar>
       <Inner>
         <Brand to="/" aria-label="Pet Gallery home">
-          🐾 Pet Gallery
+          <span className="mark" aria-hidden="true">🐾</span>
+          Pet Gallery
         </Brand>
         <Links aria-label="Primary">
           <Link to="/" end>

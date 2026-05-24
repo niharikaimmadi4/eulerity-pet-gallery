@@ -6,6 +6,7 @@ import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { PetCard } from "../components/PetCard";
 import { Spinner } from "../components/Spinner";
+import { StatsStrip } from "../components/StatsStrip";
 import { useSelection } from "../context/SelectionContext";
 import { usePetsContext } from "../context/PetsContext";
 import { useDebounce } from "../hooks/useDebounce";
@@ -73,7 +74,7 @@ function applyFilters(pets: Pet[], query: string, sort: SortKey): Pet[] {
 
 export function GalleryPage() {
   const { pets, status, error, isEmpty, refetch } = usePetsContext();
-  const { selectMany, clear, toggle } = useSelection();
+  const { selectMany, clear, toggle, count: selectedCount } = useSelection();
 
   // URL is the source of truth for query / sort / page so the view is
   // bookmarkable and shareable. Local typing state keeps the input snappy.
@@ -133,6 +134,15 @@ export function GalleryPage() {
   const visibleUrls = useMemo(() => visible.map((p) => p.url), [visible]);
   const sizes = useImageSizes(visibleUrls);
 
+  const visibleTotalBytes = useMemo(
+    () =>
+      visibleUrls.reduce((sum, url) => {
+        const v = sizes[url];
+        return typeof v === "number" ? sum + v : sum;
+      }, 0),
+    [visibleUrls, sizes],
+  );
+
   const [focusIndex, setFocusIndex] = useState(0);
 
   const handleSort = (s: SortKey) => {
@@ -190,6 +200,13 @@ export function GalleryPage() {
 
   return (
     <>
+      <StatsStrip
+        totalCount={pets.length}
+        visibleCount={filtered.length}
+        selectedCount={selectedCount}
+        totalBytes={visibleTotalBytes}
+        hasFilter={debouncedQuery.length > 0}
+      />
       <Controls
         query={query}
         onQueryChange={handleQueryChange}

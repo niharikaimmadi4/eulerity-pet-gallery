@@ -84,3 +84,17 @@ Decisions that were mine, not the model's:
 - The toolbar layout choice  keeping "Download individually" and "Download as ZIP" as two adjacent buttons rather than a dropdown, so the ZIP option is discoverable at a glance.
 - The skip link styling  visible only on focus, off-screen otherwise, accent-color background.
 - Refusing to drop a heavyweight a11y library  the audit is hand-rolled, no `react-aria` or `radix-ui`.
+
+---
+
+## 8. Round three  tailoring to Eulerity specifically
+
+A reviewer pointed out that I hadn't actually researched the company. Fixed that:
+
+1. *"Fetch eulerity.com and summarize: what they do, who their customers are, brand voice, target industries."*  learned Eulerity sells an agentic marketing-ops platform to multi-location franchises and enterprise brands (Uber, Mastercard, Xponential Fitness). Brand voice is confident and forward-looking; visual identity uses gradient overlays and modern sans-serif.
+2. *"Add a dashboard stats strip to the top of the gallery showing total / visible / selected / size. The 'selected' number uses a brand-gradient text fill. This is the same pattern as a campaign overview surface."*
+3. *"Refresh the theme: tighter neutrals, a brand gradient token, gradient bleed on the navbar, gradient-text hero on the About page."*
+4. *"Rewrite the About page in Eulerity vocabulary  asset libraries, bulk operations, URL-shareable filtered views, keyboard-first ops, WCAG for enterprise procurement. Reframe each feature in terms of *why this matters at multi-location scale*."*
+5. *"Update the README intro with a 'why these features for Eulerity specifically' paragraph and rewrite the feature table column from 'why it matters' to 'why it matters at Eulerity's scale.'"*
+
+Why this round mattered: the previous rounds answered "is it built well?" This round answers "do you understand who you'd be building for?"
