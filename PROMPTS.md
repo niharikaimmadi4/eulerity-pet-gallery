@@ -67,3 +67,20 @@ The conversation was mostly one big task, but the meaningful sub-prompts to Clau
 ## 6. Tools used
 
 - **Claude Code** (Opus 4.7, 1M context)  pair-programming, scaffolding, file writes, running build / git / gh.
+
+---
+
+## 7. Round two  the "get creative" pass
+
+After the first submission was working, I went back and asked Claude to help answer the part of the brief that says "feel free to get creative." Picked the highest-signal additions per amount of code:
+
+1. *"Make search, sort, and pagination URL-synced via `useSearchParams` so the view is bookmarkable. Keep the input snappy by holding local state, then push the debounced value into the URL with `{ replace: true }`."*
+2. *"Add a global keyboard-shortcuts layer: `/` focuses search, `j k h l` and arrow keys move card focus across the grid (row stride is the column count), `x`/Space toggle the focused card, `a` selects all visible, `Esc` clears search then clears selection, `?` toggles an in-app help dialog. Skip handling when the user is typing in an input."*
+3. *"Add a bulk ZIP download using `jszip`. Run downloads in parallel, accumulate progress via a callback, name the archive `pet-gallery-YYYY-MM-DD.zip`, and skip CORS-blocked images while reporting the count in the toolbar."*
+4. *"Do an accessibility pass: skip-to-content link, `:focus-visible` rings (no outline suppression), semantic landmarks, `aria-live` selection counter, descriptive ARIA labels on every icon-only control, `prefers-reduced-motion` honored globally. Document the audit in the README."*
+
+Decisions that were mine, not the model's:
+- The keybinding set itself (vim-style `j k h l` alongside arrows; `?` for help; `x`/Space for toggle). Picked for muscle memory consistency with GitHub, Gmail, and Vim.
+- The toolbar layout choice  keeping "Download individually" and "Download as ZIP" as two adjacent buttons rather than a dropdown, so the ZIP option is discoverable at a glance.
+- The skip link styling  visible only on focus, off-screen otherwise, accent-color background.
+- Refusing to drop a heavyweight a11y library  the audit is hand-rolled, no `react-aria` or `radix-ui`.

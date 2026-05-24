@@ -1,3 +1,4 @@
+import JSZip from "jszip";
 import type { Pet } from "../types/pet";
 import { slugify } from "./format";
 
@@ -9,6 +10,12 @@ function extensionFromUrl(url: string): string {
 function filenameFor(pet: Pet): string {
   const base = slugify(pet.title) || pet.id;
   return `${base}.${extensionFromUrl(pet.url)}`;
+}
+
+export interface ZipProgress {
+  completed: number;
+  total: number;
+  failed: number;
 }
 
 /**
@@ -46,4 +53,38 @@ export async function downloadMany(pets: Pet[]): Promise<void> {
     await downloadPet(pet);
     await new Promise((r) => setTimeout(r, 250));
   }
+}
+
+/**
+ * Bundle all selected pets into a single ZIP and trigger one download.
+ * Images that fail to fetch (e.g. CORS-blocked) are skipped; the rest still
+ * arrive in the archive. Progress callback fires after each image attempt.
+ */
+export async function downloadAsZip(
+  pets: Pet[],
+  onProgress?: (p: ZipProgress) => void,
+): Promise<ZipProgress> {
+  const zip = new JSZip();
+  const progress: ZipProgress = { completed: 0, total: pets.length, failed: 0 };
+
+  await Promise.all(
+    pets.map(async (pet) => {
+      try {
+        const res = await fetch(pet.url, { mode: "cors" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const blob = await res.blob();
+        zip.file(filenameFor(pet), blob);
+        progress.completed += 1;
+      } catch {
+        progress.failed += 1;
+      } finally {
+        onProgress?.({ ...progress });
+      }
+    }),
+  );
+
+  const archive = await zip.generateAsync({ type: "blob" });
+  const today = new Date().toISOString().slice(0, 10);
+  triggerBlobDownload(archive, `pet-gallery-${today}.zip`);
+  return progress;
 }

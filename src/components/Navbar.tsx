@@ -61,13 +61,18 @@ export function Navbar() {
   return (
     <Bar>
       <Inner>
-        <Brand to="/">🐾 Pet Gallery</Brand>
-        <Links>
+        <Brand to="/" aria-label="Pet Gallery home">
+          🐾 Pet Gallery
+        </Brand>
+        <Links aria-label="Primary">
           <Link to="/" end>
             Gallery
           </Link>
           <Link to="/selected">
-            Selected {count > 0 && <Badge>{count}</Badge>}
+            Selected{" "}
+            {count > 0 && (
+              <Badge aria-label={`${count} pets selected`}>{count}</Badge>
+            )}
           </Link>
           <Link to="/about">About</Link>
         </Links>

@@ -4,7 +4,7 @@ import type { Pet } from "../types/pet";
 import { useSelection } from "../context/SelectionContext";
 import { formatBytes, formatDate } from "../utils/format";
 
-const Card = styled.article<{ $selected: boolean }>`
+const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid
     ${({ theme, $selected }) => ($selected ? theme.colors.accent : theme.colors.border)};
@@ -13,8 +13,12 @@ const Card = styled.article<{ $selected: boolean }>`
   display: flex;
   flex-direction: column;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-  box-shadow: ${({ $selected, theme }) =>
-    $selected ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadow}` : "none"};
+  box-shadow: ${({ $selected, $focused, theme }) =>
+    $focused
+      ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadow}`
+      : $selected
+      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadow}`
+      : "none"};
 
   &:hover {
     transform: translateY(-2px);
@@ -92,15 +96,27 @@ const Meta = styled.div`
 interface Props {
   pet: Pet;
   sizeBytes: number | null | undefined;
+  focused?: boolean;
+  onFocus?: () => void;
 }
 
-export function PetCard({ pet, sizeBytes }: Props) {
+export function PetCard({ pet, sizeBytes, focused = false, onFocus }: Props) {
   const { isSelected, toggle } = useSelection();
   const checked = isSelected(pet.id);
 
   return (
-    <Card $selected={checked}>
-      <Media to={`/pets/${pet.id}`} state={{ pet }}>
+    <Card
+      $selected={checked}
+      $focused={focused}
+      role="listitem"
+      aria-label={`${pet.title}${checked ? ", selected" : ""}`}
+    >
+      <Media
+        to={`/pets/${pet.id}`}
+        state={{ pet }}
+        onFocus={onFocus}
+        aria-label={`Open details for ${pet.title}`}
+      >
         <img src={pet.url} alt={pet.title} loading="lazy" />
         <CheckLabel
           onClick={(e) => {
@@ -108,8 +124,15 @@ export function PetCard({ pet, sizeBytes }: Props) {
             e.stopPropagation();
             toggle(pet.id);
           }}
+          aria-label={checked ? `Remove ${pet.title} from selection` : `Add ${pet.title} to selection`}
         >
-          <input type="checkbox" checked={checked} readOnly />
+          <input
+            type="checkbox"
+            checked={checked}
+            readOnly
+            tabIndex={-1}
+            aria-hidden="true"
+          />
           {checked ? "Selected" : "Select"}
         </CheckLabel>
       </Media>

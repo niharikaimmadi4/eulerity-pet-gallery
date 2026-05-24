@@ -65,6 +65,7 @@ interface Props {
   onSelectAll: () => void;
   onClear: () => void;
   totalShown: number;
+  searchInputId?: string;
 }
 
 export function Controls({
@@ -75,14 +76,17 @@ export function Controls({
   onSelectAll,
   onClear,
   totalShown,
+  searchInputId,
 }: Props) {
   return (
-    <Row>
+    <Row role="search">
       <Search
+        id={searchInputId}
+        type="search"
         placeholder={`Search ${totalShown} pets by name or description…`}
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
-        aria-label="Search pets"
+        aria-label="Search pets by name or description"
       />
       <Select
         value={sort}
