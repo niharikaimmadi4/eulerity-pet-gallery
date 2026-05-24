@@ -1,8 +1,6 @@
 # Pet Gallery  Eulerity Hackathon
 
-A small, deliberate front-end demo built for the [Eulerity hackathon](https://eulerity-hackathon.appspot.com/web.html). The pet API is the canvas, but the patterns underneath  bulk asset selection, URL-shareable filtered views, keyboard-driven ops, and a dashboard-style summary strip  are the same ones a marketing-ops surface at Eulerity's scale needs every day.
-
-> **Why these specific features for Eulerity?** Eulerity sells an agentic marketing platform to multi-location franchises and enterprise brands (Uber, Mastercard, Xponential Fitness). That means: power users managing large libraries of creative assets, dashboards that need to feel fast at scale, and procurement teams who ask about accessibility before signing. Every "creative" addition in this submission was chosen with that in mind.
+A small, polished front-end project built for the [Eulerity hackathon](https://eulerity-hackathon.appspot.com/web.html). It loads pets from the `/pets` endpoint and lets you search, sort, multi-select, and download them — with selection that survives navigation, URL-shareable filtered views, keyboard-first navigation, and accessibility built in.
 
 ## Stack
 
@@ -33,18 +31,18 @@ Every requirement from the spec, plus deliberate additions to answer the "get cr
 | Responsive 1 / 2 / 4 columns | CSS grid breakpoints in `GalleryPage.tsx` |
 | Download | Single + batch + ZIP, with new-tab fallback when CORS blocks blob fetch |
 
-### Going beyond the spec (mapped to what Eulerity actually does)
+### Going beyond the spec
 
-| Feature | Why it matters at Eulerity's scale |
+| Feature | What it does |
 |---|---|
-| **Dashboard stats strip** | Total / visible / selected / size, live as filters change. Same pattern as a campaign overview surface, so the gallery feels like an operational dashboard, not just an image grid. |
-| **URL-synced state** (`?q=…&sort=…&page=…`) | Every dashboard eventually needs shareable filtered views. Search, sort, and pagination all live in the URL. A campaign manager can paste a filtered view into Slack and the recipient lands on the exact same screen. |
-| **Keyboard shortcuts** | Power users running ops across hundreds of franchise locations live on the keyboard. `/` focus search · `j k h l` / arrow keys navigate · `x`/`Space` toggle select · `a` select all · `Esc` clear · `?` opens the cheat sheet. |
-| **Bulk ZIP download** | "Pull these 40 banners for the Q3 rollout" is one click, one archive, with a live `Zipping 12/40` progress counter. Uses `jszip` client-side  no server round-trip. |
-| **Accessibility pass** | Enterprise procurement asks about WCAG before signing. Skip-to-content link, semantic landmarks, `aria-live` selection counter, `:focus-visible` rings, descriptive ARIA labels on every control, `prefers-reduced-motion` honored globally. |
-| **Single shared fetch** | `PetsProvider` wraps `usePets` once at the root so gallery, detail, selected, and toolbar share one network request. The discipline that keeps a real dashboard from N+1-ing itself to death. |
-| **HEAD-based size estimation with cache** | Total file size is computed without downloading the assets. Results cached in a module-level map so scrolling never re-asks. |
-| **Graceful CORS fallback** | If a CDN refuses the blob fetch, individual downloads open in a new tab; the ZIP path skips the asset and reports it in the progress counter. No silent failures. |
+| **Dashboard summary strip** | Total / visible / selected / estimated size at the top of the gallery, updated live as filters change. |
+| **URL-synced state** (`?q=…&sort=…&page=…`) | Search, sort, and pagination all live in the URL. Filtered views are bookmarkable and shareable; refresh keeps your spot. |
+| **Keyboard shortcuts** | `/` focus search · `j k h l` / arrow keys move card focus · `x`/`Space` toggle select · `a` select all · `Esc` clear · `?` opens an in-app cheat sheet. |
+| **Bulk ZIP download** | One archive instead of N separate save prompts. Uses `jszip` client-side with a live `Zipping 12/40` progress counter and skip-on-failure. |
+| **Accessibility pass** | Skip-to-content link, semantic landmarks, `aria-live` selection counter, `:focus-visible` rings, descriptive ARIA labels on every control, `prefers-reduced-motion` honored globally. Hand-rolled, no a11y library. |
+| **Single shared fetch** | `PetsProvider` wraps `usePets` once at the root so the gallery, detail, selected, and toolbar views share one network request. |
+| **HEAD-based size estimation with cache** | Total file size computed without downloading the images. Results cached in a module-level map so scrolling never re-asks. |
+| **Graceful CORS fallback** | If the image host refuses the blob fetch, individual downloads open in a new tab; the ZIP path skips the asset and reports it. No silent failures. |
 
 ## Run it
 

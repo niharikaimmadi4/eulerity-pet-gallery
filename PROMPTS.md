@@ -87,14 +87,12 @@ Decisions that were mine, not the model's:
 
 ---
 
-## 8. Round three  tailoring to Eulerity specifically
+## 8. Round three  visual polish
 
-A reviewer pointed out that I hadn't actually researched the company. Fixed that:
+A few additions to make the project feel more like a finished product and less like a feature checklist:
 
-1. *"Fetch eulerity.com and summarize: what they do, who their customers are, brand voice, target industries."*  learned Eulerity sells an agentic marketing-ops platform to multi-location franchises and enterprise brands (Uber, Mastercard, Xponential Fitness). Brand voice is confident and forward-looking; visual identity uses gradient overlays and modern sans-serif.
-2. *"Add a dashboard stats strip to the top of the gallery showing total / visible / selected / size. The 'selected' number uses a brand-gradient text fill. This is the same pattern as a campaign overview surface."*
-3. *"Refresh the theme: tighter neutrals, a brand gradient token, gradient bleed on the navbar, gradient-text hero on the About page."*
-4. *"Rewrite the About page in Eulerity vocabulary  asset libraries, bulk operations, URL-shareable filtered views, keyboard-first ops, WCAG for enterprise procurement. Reframe each feature in terms of *why this matters at multi-location scale*."*
-5. *"Update the README intro with a 'why these features for Eulerity specifically' paragraph and rewrite the feature table column from 'why it matters' to 'why it matters at Eulerity's scale.'"*
+1. *"Add a dashboard summary strip to the top of the gallery showing total / visible / selected / estimated size. Selected count uses a brand-gradient text fill."*
+2. *"Refresh the theme: tighter neutrals, add a brand gradient token, gradient bleed on the navbar, gradient-text hero on the About page."*
+3. *"Tighten the About page copy and reorganize into Stack / Features / Engineering notes / Accessibility / About me cards."*
 
-Why this round mattered: the previous rounds answered "is it built well?" This round answers "do you understand who you'd be building for?"
+Self-correction worth recording: an earlier draft of this round leaned on company-specific framing ("built for franchises," "designed for enterprise procurement") after researching the host company's product. That came off as a try-hard cover letter, so it was stripped back to letting the engineering work speak for itself. The work is the pitch; explaining the pitch out loud weakens it.

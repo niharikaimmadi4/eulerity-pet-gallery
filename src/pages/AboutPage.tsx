@@ -42,73 +42,38 @@ const Card = styled.section`
 export function AboutPage() {
   return (
     <Wrap>
-      <h1>About this submission</h1>
+      <h1>About this project</h1>
       <Lede>
-        Built for the Eulerity hackathon as a small, deliberate demo of the patterns I'd
-        bring to a marketing-ops dashboard: managing a library of creative assets at
-        scale, with the kind of selection, filtering, and bulk-export flows a
-        multi-location operator actually uses.
+        A small, deliberate front-end build  the kind of polished surface you'd want
+        on any product where users browse, filter, and act on a large library of items.
+        Selection that survives navigation, URL-shareable filtered views, keyboard-first
+        navigation, accessible by default, and bulk export in one click.
       </Lede>
 
       <Card>
-        <h2>Why these features, for Eulerity specifically</h2>
+        <h2>Stack</h2>
         <ul>
-          <li>
-            <strong>Asset library + bulk operations.</strong> Multi-location brands sit on
-            hundreds of creative assets. The selection model, ZIP export, and live size
-            estimate map directly to "pull these 40 banners for the Q3 franchise rollout."
-          </li>
-          <li>
-            <strong>URL-as-state.</strong> Every dashboard surface eventually needs
-            shareable filtered views. Search, sort, and pagination all live in the URL so a
-            campaign manager can paste a filtered view into Slack.
-          </li>
-          <li>
-            <strong>Keyboard-first.</strong> Power users running ops across thousands of
-            locations live on the keyboard. <code>/</code>, <code>j/k</code>,
-            <code>a</code>, <code>x</code>, <code>Esc</code>, <code>?</code>  the same
-            muscle memory as GitHub, Linear, and Gmail.
-          </li>
-          <li>
-            <strong>Accessibility as table stakes.</strong> Enterprise procurement asks
-            about WCAG before signing. Skip link, focus-visible rings, semantic landmarks,
-            aria-live counters, and <code>prefers-reduced-motion</code> are wired in, not
-            bolted on.
-          </li>
-          <li>
-            <strong>Operational telemetry surface.</strong> The dashboard strip at the top
-            of the gallery is the same pattern as a campaign overview: total / visible /
-            selected / size, updated live as filters change.
-          </li>
+          <li><strong>React 19 + TypeScript</strong>  strict types end-to-end, no <code>any</code>.</li>
+          <li><strong>Vite</strong> for the dev loop and bundle.</li>
+          <li><strong>styled-components</strong> with a typed <code>DefaultTheme</code>, theming centralized in <code>src/styles/theme.ts</code>.</li>
+          <li><strong>react-router-dom v7</strong>  routing plus <code>useSearchParams</code> for URL state.</li>
+          <li><strong>jszip</strong> for client-side bundle export. No server round-trip.</li>
+          <li><strong>Native <code>fetch</code> + <code>IntersectionObserver</code></strong>  no data-fetching library; the project is small enough that React Query would be overkill.</li>
         </ul>
       </Card>
 
       <Card>
-        <h2>Stack and why</h2>
+        <h2>Features</h2>
         <ul>
-          <li>
-            <strong>React 19 + TypeScript</strong>  strict types end-to-end. No
-            <code>any</code>.
-          </li>
-          <li>
-            <strong>Vite</strong>  fast dev loop matters when you iterate on dashboard
-            UI all day.
-          </li>
-          <li>
-            <strong>styled-components</strong> with a typed <code>DefaultTheme</code>
-            theming centralized in <code>src/styles/theme.ts</code>.
-          </li>
-          <li>
-            <strong>react-router-dom v7</strong>  routing + URL-state via
-            <code>useSearchParams</code>.
-          </li>
-          <li>
-            <strong>jszip</strong> for client-side bundle export. No server round-trip.
-          </li>
-          <li>
-            <strong>Native fetch + IntersectionObserver</strong>  no data-fetching
-            library. The project is small enough that React Query would be overkill.
-          </li>
+          <li><strong>Dashboard summary strip</strong>  total / visible / selected / estimated size, updated live as filters change.</li>
+          <li><strong>Search</strong> across title and description, debounced for snappy typing.</li>
+          <li><strong>Four sort modes</strong>  A–Z, Z–A, newest, oldest.</li>
+          <li><strong>Multi-select</strong> with selection that persists across every route.</li>
+          <li><strong>URL-as-state</strong>  search, sort, and pagination all live in the URL, so filtered views are bookmarkable and shareable.</li>
+          <li><strong>Infinite scroll</strong> via <code>IntersectionObserver</code>, page size 8.</li>
+          <li><strong>Keyboard-first ops</strong>  <code>/</code>, <code>j k h l</code>/arrows, <code>x</code>/Space, <code>a</code>, <code>Esc</code>, <code>?</code>, with an in-app cheat sheet.</li>
+          <li><strong>Bulk download</strong>  per-image or as a ZIP with live progress.</li>
+          <li><strong>Responsive grid</strong>  1 / 2 / 4 columns at the standard breakpoints.</li>
         </ul>
       </Card>
 
@@ -122,18 +87,34 @@ export function AboutPage() {
           </li>
           <li>
             <strong>Selection lifted above the router.</strong> Survives navigation across
-            every route. Bottom toolbar follows you everywhere.
+            every route. The bottom toolbar follows you everywhere.
           </li>
           <li>
             <strong>Size estimation without downloading.</strong> HEAD requests with a
             module-level cache. Scrolling never re-asks for a size we've already seen.
           </li>
           <li>
-            <strong>Graceful CORS fallback.</strong> When Pexels refuses the blob fetch,
-            individual downloads open in a new tab and the ZIP path skips the asset and
-            reports it in the progress counter.
+            <strong>Graceful CORS fallback.</strong> When the image host refuses the blob
+            fetch, individual downloads open in a new tab and the ZIP path skips the
+            asset and reports it in the progress counter. No silent failures.
+          </li>
+          <li>
+            <strong>Stable IDs.</strong> The API returns no IDs, so we derive
+            <code>slug(title)-index</code>. Stable for the lifetime of a response, which
+            is enough for routing and selection.
           </li>
         </ul>
+      </Card>
+
+      <Card>
+        <h2>Accessibility</h2>
+        <p>
+          Built in, not bolted on: skip-to-content link, semantic landmarks,
+          <code>aria-live</code> selection counter, <code>:focus-visible</code> rings for
+          keyboard users only, descriptive ARIA labels on every interactive element, and
+          <code>prefers-reduced-motion</code> honored globally. No <code>react-aria</code>
+          or other heavyweight a11y library  the audit is hand-rolled.
+        </p>
       </Card>
 
       <Card>
