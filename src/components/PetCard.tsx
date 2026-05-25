@@ -18,29 +18,21 @@ const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
     box-shadow 280ms ease;
 
   /* Neumorphic raised extrusion: light from top-left, dark from
-     bottom-right. Selected and focused states use an accent ring on top
-     of the same base shadow. */
-  box-shadow: ${({ $selected, $focused, theme }) => {
-    if ($focused) {
-      return `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raised}`;
-    }
-    if ($selected) {
-      return `0 0 0 2px ${theme.colors.accent}, ${theme.shadows.raised}`;
-    }
-    return theme.shadows.raised;
-  }};
+     bottom-right. Only the keyboard-focused state gets an accent ring
+     so it stays visible during keyboard navigation. The "Selected"
+     state is communicated by the pill on the card itself, not by a
+     full-card border. */
+  box-shadow: ${({ $focused, theme }) =>
+    $focused
+      ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raised}`
+      : theme.shadows.raised};
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: ${({ $selected, $focused, theme }) => {
-      if ($focused) {
-        return `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`;
-      }
-      if ($selected) {
-        return `0 0 0 2px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`;
-      }
-      return theme.shadows.raisedLarge;
-    }};
+    box-shadow: ${({ $focused, theme }) =>
+      $focused
+        ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`
+        : theme.shadows.raisedLarge};
   }
 `;
 
@@ -70,12 +62,13 @@ const TitleLink = styled(Link)`
   &:hover { color: ${({ theme }) => theme.colors.accent}; }
 `;
 
-const CheckLabel = styled.label`
+const CheckLabel = styled.label<{ $checked: boolean }>`
   position: absolute;
   top: 12px;
   left: 12px;
   z-index: 2;
-  background: ${({ theme }) => theme.colors.surface};
+  background: ${({ $checked, theme }) =>
+    $checked ? theme.colors.accent : theme.colors.surface};
   border-radius: ${({ theme }) => theme.radiusPill};
   padding: 6px 14px 6px 10px;
   display: inline-flex;
@@ -84,16 +77,30 @@ const CheckLabel = styled.label`
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ $checked, theme }) => ($checked ? "white" : theme.colors.text)};
   box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
-  transition: box-shadow 200ms ease;
+  transition: background 200ms ease, color 200ms ease, box-shadow 200ms ease;
 
   &:hover { box-shadow: ${({ theme }) => theme.shadows.raised}; }
 
-  input {
-    accent-color: ${({ theme }) => theme.colors.accent};
-    margin: 0;
-  }
+  /* Hide the native checkbox; the pill itself + custom box do the visual job. */
+  input { position: absolute; opacity: 0; pointer-events: none; }
+`;
+
+const CheckBox = styled.span<{ $checked: boolean }>`
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  display: inline-grid;
+  place-items: center;
+  background: ${({ $checked }) => ($checked ? "white" : "transparent")};
+  border: 1.5px solid
+    ${({ $checked, theme }) => ($checked ? "white" : theme.colors.textMuted)};
+  color: ${({ theme }) => theme.colors.accent};
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  transition: background 160ms ease, border-color 160ms ease;
 `;
 
 const heartBurst = keyframes`
@@ -255,6 +262,7 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
       >
         <img src={pet.url} alt={pet.title} loading="lazy" />
         <CheckLabel
+          $checked={checked}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -269,6 +277,9 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
             tabIndex={-1}
             aria-hidden="true"
           />
+          <CheckBox $checked={checked} aria-hidden="true">
+            {checked ? "✓" : null}
+          </CheckBox>
           {checked ? "Selected" : "Select"}
         </CheckLabel>
         <HeartButton
