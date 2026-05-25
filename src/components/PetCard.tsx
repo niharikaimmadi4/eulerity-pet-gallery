@@ -7,32 +7,49 @@ import { useSelection } from "../context/SelectionContext";
 import { formatBytes, formatDate } from "../utils/format";
 
 const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
+  position: relative;
   background: ${({ theme }) => theme.colors.surface};
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid
     ${({ theme, $selected }) => ($selected ? theme.colors.accent : theme.colors.border)};
   border-radius: ${({ theme }) => theme.radius};
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* Ensure the card always fills its grid cell so every card in a row
-     has identical dimensions regardless of content. */
   height: 100%;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms ease, box-shadow 280ms ease;
   box-shadow: ${({ $selected, $focused, theme }) =>
     $focused
-      ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadow}`
+      ? `0 0 0 2px ${theme.colors.accent}, ${theme.shadow}`
       : $selected
-      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadow}`
-      : "none"};
+      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadowSoft}`
+      : `inset 0 1px 0 rgba(255, 255, 255, 0.05), ${theme.shadowSoft}`};
+
+  /* Soft inner glow on hover, matching the ambient feel of the reference. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 280ms ease;
+  }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: ${({ theme }) => theme.colors.borderStrong};
     box-shadow: ${({ theme }) => theme.shadow};
   }
+  &:hover::after { opacity: 1; }
 `;
 
 const Media = styled.button`
   position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -46,7 +63,7 @@ const Media = styled.button`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 240ms ease;
+    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   &:hover img { transform: scale(1.04); }
 `;
@@ -58,21 +75,27 @@ const TitleLink = styled(Link)`
 
 const CheckLabel = styled.label`
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(15, 17, 21, 0.7);
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
-  padding: 6px 10px;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: rgba(7, 11, 26, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 5px 12px 5px 8px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   color: ${({ theme }) => theme.colors.text};
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
 
-  input { accent-color: ${({ theme }) => theme.colors.accent}; }
+  input {
+    accent-color: ${({ theme }) => theme.colors.accent};
+    margin: 0;
+  }
 `;
 
 const heartBurst = keyframes`
@@ -89,14 +112,16 @@ const ringPulse = keyframes`
 
 const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 34px;
-  height: 34px;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: rgba(15, 17, 21, 0.7);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(7, 11, 26, 0.65);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -133,14 +158,13 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
 `;
 
 const Body = styled.div`
+  position: relative;
+  z-index: 1;
   padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  /* Equal-sized cards: body stretches and meta is pinned to bottom
-     so a 1-line description and a 2-line description still produce
-     identical card heights with identical baselines. */
 `;
 
 const Title = styled.h3`
