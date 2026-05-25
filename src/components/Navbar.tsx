@@ -7,18 +7,9 @@ const Bar = styled.header`
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(12px);
-  background: rgba(10, 13, 20, 0.78);
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-
-  /* Subtle gradient bleed for visual depth without a hard band. */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: ${({ theme }) => theme.gradients.surface};
-    pointer-events: none;
-  }
+  background: ${({ theme }) => theme.colors.bg};
+  /* No border or shadow on the bar itself  the page surfaces below
+     are the visible elements. */
 `;
 
 const Inner = styled.div`
@@ -43,19 +34,20 @@ const Brand = styled(NavLink)`
   color: ${({ theme }) => theme.colors.text};
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   letter-spacing: -0.01em;
   white-space: nowrap;
   flex-shrink: 0;
 
   .mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: ${({ theme }) => theme.gradients.brand};
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: ${({ theme }) => theme.colors.bg};
+    box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
     display: grid;
     place-items: center;
-    font-size: 16px;
+    font-size: 18px;
     flex-shrink: 0;
   }
   &:hover { color: ${({ theme }) => theme.colors.accent}; }
@@ -95,7 +87,7 @@ const Badge = styled.span`
   padding: 0 7px;
   border-radius: 999px;
   background: ${({ theme }) => theme.colors.accent};
-  color: #0b0e14;
+  color: white;
   font-size: 12px;
   font-weight: 700;
 `;

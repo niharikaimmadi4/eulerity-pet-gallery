@@ -62,17 +62,22 @@ const HelpButton = styled.button`
   position: fixed;
   bottom: 18px;
   right: 18px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 0;
   color: ${({ theme }) => theme.colors.text};
   font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
   z-index: 5;
-  box-shadow: ${({ theme }) => theme.shadow};
-  &:hover { color: ${({ theme }) => theme.colors.accent}; }
+  box-shadow: ${({ theme }) => theme.shadows.raised};
+  transition: box-shadow 200ms ease;
+  &:hover {
+    color: ${({ theme }) => theme.colors.accent};
+    box-shadow: ${({ theme }) => theme.shadows.raisedLarge};
+  }
 `;
 
 const SHORTCUTS: Array<{ keys: string[]; label: string }> = [

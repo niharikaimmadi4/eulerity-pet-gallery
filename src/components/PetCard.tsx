@@ -9,42 +9,39 @@ import { formatBytes, formatDate } from "../utils/format";
 const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
   position: relative;
   background: ${({ theme }) => theme.colors.surface};
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid
-    ${({ theme, $selected }) => ($selected ? theme.colors.accent : theme.colors.border)};
   border-radius: ${({ theme }) => theme.radius};
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
   transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 220ms ease, box-shadow 280ms ease;
-  box-shadow: ${({ $selected, $focused, theme }) =>
-    $focused
-      ? `0 0 0 2px ${theme.colors.accent}, ${theme.shadow}`
-      : $selected
-      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadowSoft}`
-      : `inset 0 1px 0 rgba(255, 255, 255, 0.05), ${theme.shadowSoft}`};
+    box-shadow 280ms ease;
 
-  /* Soft inner glow on hover, matching the ambient feel of the reference. */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.15), transparent 60%);
-    opacity: 0;
-    transition: opacity 280ms ease;
-  }
+  /* Neumorphic raised extrusion: light from top-left, dark from
+     bottom-right. Selected and focused states use an accent ring on top
+     of the same base shadow. */
+  box-shadow: ${({ $selected, $focused, theme }) => {
+    if ($focused) {
+      return `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raised}`;
+    }
+    if ($selected) {
+      return `0 0 0 2px ${theme.colors.accent}, ${theme.shadows.raised}`;
+    }
+    return theme.shadows.raised;
+  }};
 
   &:hover {
     transform: translateY(-3px);
-    border-color: ${({ theme }) => theme.colors.borderStrong};
-    box-shadow: ${({ theme }) => theme.shadow};
+    box-shadow: ${({ $selected, $focused, theme }) => {
+      if ($focused) {
+        return `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`;
+      }
+      if ($selected) {
+        return `0 0 0 2px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`;
+      }
+      return theme.shadows.raisedLarge;
+    }};
   }
-  &:hover::after { opacity: 1; }
 `;
 
 const Media = styled.button`
@@ -78,19 +75,20 @@ const CheckLabel = styled.label`
   top: 12px;
   left: 12px;
   z-index: 2;
-  background: rgba(7, 11, 26, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 5px 12px 5px 8px;
+  background: ${({ theme }) => theme.colors.surface};
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 6px 14px 6px 10px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: ${({ theme }) => theme.colors.text};
-  backdrop-filter: blur(10px) saturate(160%);
-  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
+  transition: box-shadow 200ms ease;
+
+  &:hover { box-shadow: ${({ theme }) => theme.shadows.raised}; }
 
   input {
     accent-color: ${({ theme }) => theme.colors.accent};
@@ -115,20 +113,20 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
   top: 12px;
   right: 12px;
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(7, 11, 26, 0.65);
-  backdrop-filter: blur(10px) saturate(160%);
-  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  border: 0;
+  background: ${({ theme }) => theme.colors.surface};
+  box-shadow: ${({ theme, $active }) =>
+    $active ? theme.shadows.pressed : theme.shadows.raisedSmall};
   cursor: pointer;
   display: grid;
   place-items: center;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
-  color: ${({ $active }) => ($active ? "#ff7c98" : "rgba(255,255,255,0.7)")};
-  transition: color 160ms ease;
+  color: ${({ $active, theme }) => ($active ? theme.colors.accent : theme.colors.textMuted)};
+  transition: color 200ms ease, box-shadow 200ms ease;
 
   & > .glyph {
     display: inline-block;
@@ -142,14 +140,16 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 2px solid #ff7c98;
+    border: 2px solid ${({ theme }) => theme.colors.accent};
     pointer-events: none;
     opacity: 0;
     animation: ${({ $burst }) => ($burst ? ringPulse : "none")} 500ms ease-out;
   }
 
   &:hover {
-    color: #ff7c98;
+    color: ${({ theme }) => theme.colors.accent};
+    box-shadow: ${({ theme, $active }) =>
+      $active ? theme.shadows.pressed : theme.shadows.raised};
   }
   &:hover > .glyph {
     transform: scale(1.1);

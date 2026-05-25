@@ -8,21 +8,21 @@ import { formatBytes } from "../utils/format";
 
 const Bar = styled.div<{ $visible: boolean }>`
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transform: translateY(${({ $visible }) => ($visible ? "0" : "120%")});
-  transition: transform 220ms ease;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  transform: translateY(${({ $visible }) => ($visible ? "0" : "calc(100% + 32px)")});
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
   background: ${({ theme }) => theme.colors.surface};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: ${({ theme }) => theme.shadow};
+  border-radius: ${({ theme }) => theme.radius};
+  box-shadow: ${({ theme }) => theme.shadows.raisedLarge};
   z-index: 20;
+  max-width: 1280px;
+  margin: 0 auto;
 `;
 
 const Inner = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 14px 20px;
+  padding: 16px 22px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -43,18 +43,29 @@ const Spacer = styled.div`
 
 const Btn = styled.button<{ $variant?: "primary" | "ghost" }>`
   background: ${({ theme, $variant }) =>
-    $variant === "primary" ? theme.colors.accent : "transparent"};
+    $variant === "primary" ? theme.colors.accent : theme.colors.surface};
   color: ${({ theme, $variant }) =>
-    $variant === "primary" ? "#0b0e14" : theme.colors.text};
-  border: 1px solid
-    ${({ theme, $variant }) =>
-      $variant === "primary" ? theme.colors.accent : theme.colors.border};
-  border-radius: 10px;
-  padding: 10px 16px;
+    $variant === "primary" ? "white" : theme.colors.text};
+  border: 0;
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 12px 20px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  &:hover { filter: brightness(1.08); }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  box-shadow: ${({ theme, $variant }) =>
+    $variant === "primary"
+      ? "0 6px 16px rgba(255, 122, 107, 0.35)"
+      : theme.shadows.raisedSmall};
+  transition: box-shadow 200ms ease, transform 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: ${({ theme, $variant }) =>
+      $variant === "primary"
+        ? "0 10px 20px rgba(255, 122, 107, 0.4)"
+        : theme.shadows.raised};
+  }
+  &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 `;
 
 const Progress = styled.div`

@@ -13,48 +13,66 @@ const Row = styled.div`
   }
 `;
 
-const inputStyles = `
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
+const Search = styled.input`
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
+  border: 0;
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 14px 22px;
   font-size: 14px;
   outline: none;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
-`;
-
-const Search = styled.input`
-  ${inputStyles}
-  --surface: ${({ theme }) => theme.colors.surface};
-  --border: ${({ theme }) => theme.colors.border};
-  --text: ${({ theme }) => theme.colors.text};
   width: 100%;
+  box-shadow: ${({ theme }) => theme.shadows.pressed};
+  transition: box-shadow 200ms ease;
+
+  &::placeholder { color: ${({ theme }) => theme.colors.textMuted}; }
   &:focus {
-    border-color: ${({ theme }) => theme.colors.accent};
-    box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.18);
+    box-shadow:
+      ${({ theme }) => theme.shadows.pressed},
+      0 0 0 3px ${({ theme }) => theme.colors.accentMuted};
   }
 `;
 
 const Select = styled.select`
-  ${inputStyles}
-  --surface: ${({ theme }) => theme.colors.surface};
-  --border: ${({ theme }) => theme.colors.border};
-  --text: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
+  border: 0;
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
   cursor: pointer;
+  box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
+  transition: box-shadow 200ms ease;
+
+  &:hover { box-shadow: ${({ theme }) => theme.shadows.raised}; }
 `;
 
 const Btn = styled.button<{ $variant?: "ghost" | "primary" }>`
-  ${inputStyles}
-  --surface: ${({ theme, $variant }) =>
+  background: ${({ theme, $variant }) =>
     $variant === "primary" ? theme.colors.accent : theme.colors.surface};
-  --border: ${({ theme, $variant }) =>
-    $variant === "primary" ? theme.colors.accent : theme.colors.border};
-  --text: ${({ theme, $variant }) =>
-    $variant === "primary" ? "#0b0e14" : theme.colors.text};
-  cursor: pointer;
+  color: ${({ theme, $variant }) =>
+    $variant === "primary" ? "white" : theme.colors.text};
+  border: 0;
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 12px 20px;
+  font-size: 13px;
   font-weight: 600;
-  &:hover { filter: brightness(1.08); }
+  cursor: pointer;
+  box-shadow: ${({ theme, $variant }) =>
+    $variant === "primary"
+      ? "0 6px 16px rgba(255, 122, 107, 0.35)"
+      : theme.shadows.raisedSmall};
+  transition: box-shadow 200ms ease, transform 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: ${({ theme, $variant }) =>
+      $variant === "primary"
+        ? "0 10px 20px rgba(255, 122, 107, 0.4)"
+        : theme.shadows.raised};
+  }
 `;
 
 interface Props {

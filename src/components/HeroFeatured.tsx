@@ -12,25 +12,13 @@ const Wrap = styled.section`
   border-radius: 24px;
   overflow: hidden;
   background: ${({ theme }) => theme.colors.surface};
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: ${({ theme }) => theme.shadow};
+  box-shadow: ${({ theme }) => theme.shadows.raisedLarge};
   display: grid;
   grid-template-columns: 1fr;
   min-height: 360px;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  }
-
-  /* Soft inner glow at the top center, like the reference smart-home hero. */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 60% 40% at 30% 0%, rgba(96, 165, 250, 0.22), transparent 60%);
   }
 `;
 
@@ -134,25 +122,33 @@ const Actions = styled.div`
 `;
 
 const Btn = styled.button<{ $variant?: "primary" | "ghost" | "fav" }>`
-  border-radius: 999px;
-  padding: 11px 18px;
+  border-radius: ${({ theme }) => theme.radiusPill};
+  padding: 12px 20px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: filter 160ms ease, transform 160ms ease, background 160ms ease;
+  transition: filter 160ms ease, transform 160ms ease, box-shadow 200ms ease;
+  border: 0;
 
-  border: 1px solid
-    ${({ theme, $variant }) =>
-      $variant === "primary" ? theme.colors.accent : "rgba(255,255,255,0.12)"};
   background: ${({ theme, $variant }) =>
-    $variant === "primary" ? theme.colors.accent : "rgba(255,255,255,0.04)"};
+    $variant === "primary" ? theme.colors.accent : theme.colors.surface};
   color: ${({ theme, $variant }) =>
-    $variant === "primary" ? "#06122a" : theme.colors.text};
+    $variant === "primary" ? "white" : theme.colors.text};
+  box-shadow: ${({ theme, $variant }) =>
+    $variant === "primary"
+      ? "0 6px 16px rgba(255, 122, 107, 0.35)"
+      : theme.shadows.raisedSmall};
 
-  &:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: ${({ theme, $variant }) =>
+      $variant === "primary"
+        ? "0 10px 20px rgba(255, 122, 107, 0.4)"
+        : theme.shadows.raised};
+  }
 `;
 
 interface Props {

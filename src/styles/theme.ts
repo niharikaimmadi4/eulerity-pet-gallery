@@ -1,38 +1,57 @@
 export const theme = {
   colors: {
-    // Deep midnight-navy at the top of the page, fading to a warmer dusty
-    // navy at the bottom via the pageBg gradient. Inspired by ambient
-    // smart-home control center designs.
-    bg: "#070b1a",
-    surface: "rgba(20, 27, 56, 0.55)",
-    surfaceSolid: "#0f1530",
-    surfaceAlt: "#161e3d",
-    border: "rgba(255, 255, 255, 0.08)",
-    borderStrong: "rgba(255, 255, 255, 0.14)",
-    text: "#eaf0ff",
-    textMuted: "#8b97b8",
-    accent: "#60a5fa",
-    accentHover: "#93c5fd",
-    accentMuted: "#1e3a6e",
-    danger: "#f87171",
-    success: "#4ade80",
-    warning: "#fbbf24",
+    // Soft cream base, slightly cool. Surfaces share the same color so the
+    // neumorphic shadows do the visual lifting.
+    bg: "#e8ecf3",
+    surface: "#e8ecf3",
+    surfaceAlt: "#dde2eb",
+    surfaceSolid: "#e8ecf3",
+    border: "rgba(174, 174, 192, 0.18)",
+    borderStrong: "rgba(174, 174, 192, 0.32)",
+    text: "#2a2d3a",
+    textMuted: "#6b7080",
+    textSubtle: "#9aa0b0",
+    accent: "#ff7a6b",
+    accentHover: "#ff8d80",
+    accentMuted: "rgba(255, 122, 107, 0.18)",
+    secondary: "#8a8cf0",
+    secondaryMuted: "rgba(138, 140, 240, 0.18)",
+    danger: "#ef4444",
+    success: "#10b981",
+    warning: "#f59e0b",
+    // Neumorphic shadow channel colors. Light from top-left, dark from
+    // bottom-right; tuned soft to keep the design dreamy and not harsh.
+    nmLight: "rgba(255, 255, 255, 0.95)",
+    nmDark: "rgba(174, 174, 192, 0.45)",
   },
   gradients: {
-    brand: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)",
-    surface: "linear-gradient(180deg, rgba(96,165,250,0.10) 0%, rgba(96,165,250,0) 100%)",
-    halo: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(96,165,250,0.22), transparent 70%)",
-    pageBg:
-      "linear-gradient(180deg, #050818 0%, #0a1024 35%, #14203f 75%, #1f2a55 100%)",
+    brand: "linear-gradient(135deg, #ff8d80 0%, #ff7a6b 60%, #ff6859 100%)",
+    secondary: "linear-gradient(135deg, #a4a6f5 0%, #8a8cf0 100%)",
+    surface: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%)",
+  },
+  shadows: {
+    // Raised: standard neumorphic extrusion.
+    raised:
+      "-8px -8px 18px rgba(255, 255, 255, 0.95), 8px 8px 18px rgba(174, 174, 192, 0.45)",
+    raisedSmall:
+      "-4px -4px 10px rgba(255, 255, 255, 0.9), 4px 4px 10px rgba(174, 174, 192, 0.4)",
+    raisedLarge:
+      "-12px -12px 28px rgba(255, 255, 255, 1), 12px 12px 28px rgba(174, 174, 192, 0.5)",
+    // Pressed: inset shadows for active/selected toggle states.
+    pressed:
+      "inset -3px -3px 8px rgba(255, 255, 255, 0.85), inset 3px 3px 8px rgba(174, 174, 192, 0.4)",
+    pressedSmall:
+      "inset -2px -2px 5px rgba(255, 255, 255, 0.85), inset 2px 2px 5px rgba(174, 174, 192, 0.4)",
   },
   breakpoints: {
     tablet: "640px",
     desktop: "1024px",
   },
-  radius: "16px",
-  radiusSmall: "10px",
-  shadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
-  shadowSoft: "0 4px 20px rgba(0, 0, 0, 0.3)",
+  radius: "20px",
+  radiusSmall: "14px",
+  radiusPill: "999px",
+  shadow: "0 10px 30px rgba(174, 174, 192, 0.25)",
+  shadowSoft: "0 4px 16px rgba(174, 174, 192, 0.18)",
 } as const;
 
 export type Theme = typeof theme;
