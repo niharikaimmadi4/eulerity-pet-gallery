@@ -65,18 +65,25 @@ const IconBtn = styled.button`
 
 const Stage = styled.div`
   position: relative;
-  display: grid;
-  place-items: center;
-  padding: 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 80px;
   overflow: hidden;
+  /* Allow this grid item (Backdrop has grid-template-rows: auto 1fr auto)
+     to shrink below content size so flex centering can actually constrain
+     the image. Without min-height: 0 the row would expand to image height
+     and overflow: hidden would clip the bottom. */
   min-height: 0;
 
   .imageHolder {
     position: relative;
     width: 100%;
     height: 100%;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
   }
 
   img {
@@ -86,11 +93,11 @@ const Stage = styled.div`
     height: auto;
     object-fit: contain;
     border-radius: 8px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    padding: 0 12px;
+    padding: 16px 16px;
   }
 `;
 
