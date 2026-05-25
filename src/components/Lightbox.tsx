@@ -26,7 +26,9 @@ const TopBar = styled.header`
   justify-content: space-between;
   gap: 16px;
   padding: 14px 20px;
-  color: ${({ theme }) => theme.colors.text};
+  /* The lightbox stays dark-themed regardless of the app theme, so the
+     image is always the focus. Text colors are hardcoded to light. */
+  color: #ffffff;
   background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
 `;
 
@@ -36,8 +38,8 @@ const TopInfo = styled.div`
   gap: 2px;
   min-width: 0;
 
-  strong { font-size: 16px; }
-  span { font-size: 12px; color: ${({ theme }) => theme.colors.textMuted}; }
+  strong { font-size: 16px; color: #ffffff; }
+  span { font-size: 12px; color: rgba(255, 255, 255, 0.65); }
 `;
 
 const TopActions = styled.div`
@@ -47,9 +49,9 @@ const TopActions = styled.div`
 `;
 
 const IconBtn = styled.button`
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: ${({ theme }) => theme.colors.text};
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -57,7 +59,8 @@ const IconBtn = styled.button`
   font-size: 18px;
   display: grid;
   place-items: center;
-  &:hover { background: rgba(255,255,255,0.16); }
+  transition: background 160ms ease;
+  &:hover { background: rgba(255, 255, 255, 0.22); }
 `;
 
 const Stage = styled.div`
@@ -99,16 +102,16 @@ const NavArrow = styled.button<{ $side: "left" | "right" }>`
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
   font-size: 22px;
   cursor: pointer;
   display: grid;
   place-items: center;
   transition: background 120ms ease, transform 120ms ease;
   &:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.22);
     transform: translateY(-50%) scale(1.05);
   }
   &:disabled { opacity: 0.35; cursor: not-allowed; }
@@ -120,11 +123,11 @@ const Caption = styled.footer`
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: rgba(255, 255, 255, 0.65);
   font-size: 13px;
-  background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
 
-  p { margin: 0; max-width: 760px; line-height: 1.5; color: ${({ theme }) => theme.colors.text}; }
+  p { margin: 0; max-width: 760px; line-height: 1.5; color: #ffffff; }
   span { white-space: nowrap; }
 `;
 
