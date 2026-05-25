@@ -2,10 +2,10 @@ export const theme = {
   colors: {
     bg: "#07080c",
     bgRaised: "#0c0e14",
-    surface: "rgba(20, 23, 36, 0.6)",
+    surface: "rgba(20, 23, 36, 0.82)",
     surfaceSolid: "#11141f",
     surfaceAlt: "#171b2a",
-    surfaceHover: "rgba(28, 32, 50, 0.65)",
+    surfaceHover: "rgba(28, 32, 50, 0.88)",
     border: "rgba(255, 255, 255, 0.08)",
     borderStrong: "rgba(255, 255, 255, 0.14)",
     text: "#f3f5fb",

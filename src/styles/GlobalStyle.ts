@@ -1,18 +1,17 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-  @import url("https://rsms.me/inter/inter.css");
-  @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap");
-
   *, *::before, *::after { box-sizing: border-box; }
   html, body, #root { height: 100%; }
   html {
+    background: ${({ theme }) => theme.colors.bg};
     font-feature-settings: "cv11", "ss01", "ss03";
   }
   body {
     margin: 0;
     font-family: ${({ theme }) => theme.font.body};
-    background: ${({ theme }) => theme.colors.bg};
+    /* Transparent body so the fixed Aurora layer behind #root is visible. */
+    background: transparent;
     color: ${({ theme }) => theme.colors.text};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
