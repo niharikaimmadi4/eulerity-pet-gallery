@@ -11,7 +11,7 @@ const Bar = styled.header`
   background: rgba(10, 13, 20, 0.78);
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 
-  /* Subtle gradient bleed echoing Eulerity's brand accents. */
+  /* Subtle gradient bleed for visual depth without a hard band. */
   &::before {
     content: "";
     position: absolute;

@@ -13,7 +13,7 @@ const Wrap = styled.section`
   grid-template-columns: 1fr;
   gap: 18px;
 
-  /* Soft brand gradient bleed to echo Eulerity's visual identity. */
+  /* Soft brand gradient bleed to lift the strip off the page background. */
   &::after {
     content: "";
     position: absolute;
