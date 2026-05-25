@@ -250,6 +250,7 @@ export function GalleryPage() {
                     opacity: { duration: 0.22, delay: staggerDelay },
                     y: { type: "spring", stiffness: 320, damping: 26, delay: staggerDelay },
                   }}
+                  style={{ display: "flex", flexDirection: "column" }}
                 >
                   <PetCard
                     pet={pet}

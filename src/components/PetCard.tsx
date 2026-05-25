@@ -14,6 +14,9 @@ const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* Ensure the card always fills its grid cell so every card in a row
+     has identical dimensions regardless of content. */
+  height: 100%;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
   box-shadow: ${({ $selected, $focused, theme }) =>
     $focused
@@ -135,26 +138,40 @@ const Body = styled.div`
   flex-direction: column;
   gap: 6px;
   flex: 1;
+  /* Equal-sized cards: body stretches and meta is pinned to bottom
+     so a 1-line description and a 2-line description still produce
+     identical card heights with identical baselines. */
 `;
 
 const Title = styled.h3`
   margin: 0;
   font-size: 16px;
   line-height: 1.3;
+  /* Always exactly one line  ellipsis on overflow so the title row
+     never pushes the description down inconsistently. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Desc = styled.p`
   margin: 0;
   font-size: 13px;
+  line-height: 1.45;
   color: ${({ theme }) => theme.colors.textMuted};
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Reserve exactly two lines of vertical space whether the description
+     is one line or two. Without this, shorter descriptions create
+     visible whitespace imbalance between cards. */
+  min-height: calc(13px * 1.45 * 2);
 `;
 
 const Meta = styled.div`
-  margin-top: 8px;
+  margin-top: auto;
+  padding-top: 8px;
   display: flex;
   justify-content: space-between;
   font-size: 12px;
