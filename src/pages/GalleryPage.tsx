@@ -64,10 +64,17 @@ function applyFilters(pets: Pet[], query: string, sort: SortKey): Pet[] {
         return a.title.localeCompare(b.title);
       case "za":
         return b.title.localeCompare(a.title);
-      case "newest":
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      case "oldest":
-        return a.createdAt.getTime() - b.createdAt.getTime();
+      case "newest": {
+        // Tiebreaker: when timestamps tie (the API gives every pet the same
+        // created date), fall back to A-Z so the ordering is deterministic
+        // and visibly differs from "oldest first".
+        const diff = b.createdAt.getTime() - a.createdAt.getTime();
+        return diff !== 0 ? diff : a.title.localeCompare(b.title);
+      }
+      case "oldest": {
+        const diff = a.createdAt.getTime() - b.createdAt.getTime();
+        return diff !== 0 ? diff : b.title.localeCompare(a.title);
+      }
     }
   });
   return sorted;

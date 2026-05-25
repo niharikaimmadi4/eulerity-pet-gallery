@@ -13,7 +13,13 @@ async function headSize(url: string, signal: AbortSignal): Promise<number | null
     const value = Number.isFinite(parsed) ? parsed : null;
     cache[url] = value;
     return value;
-  } catch {
+  } catch (err) {
+    // Don't poison the cache on abort. The request was cancelled because
+    // the URL list changed (e.g. user scrolled); the next effect run should
+    // retry, not inherit a null result from an aborted attempt.
+    if (err instanceof DOMException && err.name === "AbortError") {
+      return null;
+    }
     cache[url] = null;
     return null;
   }
