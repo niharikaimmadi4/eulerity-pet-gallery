@@ -123,8 +123,11 @@ export function SelectionToolbar() {
             {count} pet{count === 1 ? "" : "s"} selected
           </strong>
           <span>
-            ~{formatBytes(totalKnown)}
-            {unknownCount > 0 && ` (+${unknownCount} unknown)`}
+            {known.length === 0
+              ? "Size unavailable"
+              : unknownCount === 0
+              ? `~${formatBytes(totalKnown)}`
+              : `~${formatBytes(totalKnown)} (${unknownCount} of ${urls.length} unavailable)`}
           </span>
           {progress && busy === "zip" && (
             <Progress>
