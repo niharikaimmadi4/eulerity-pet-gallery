@@ -2,6 +2,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ErrorState } from "../components/ErrorState";
 import { Spinner } from "../components/Spinner";
+import { useFavorites } from "../context/FavoritesContext";
 import { usePetsContext } from "../context/PetsContext";
 import { useSelection } from "../context/SelectionContext";
 import { useImageSizes } from "../hooks/useImageSizes";
@@ -88,6 +89,7 @@ export function PetDetailPage() {
   const location = useLocation();
   const { pets, status, error, refetch } = usePetsContext();
   const { isSelected, toggle } = useSelection();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
 
   const passedPet = (location.state as { pet?: Pet } | null)?.pet;
   const pet = passedPet ?? pets.find((p) => p.id === id);
@@ -136,6 +138,12 @@ export function PetDetailPage() {
               onClick={() => toggle(pet.id)}
             >
               {checked ? "Remove from selection" : "Add to selection"}
+            </Btn>
+            <Btn
+              onClick={() => toggleFavorite(pet.id)}
+              aria-pressed={isFavorite(pet.id)}
+            >
+              {isFavorite(pet.id) ? "♥ Favorited" : "♡ Favorite"}
             </Btn>
             <Btn onClick={() => downloadPet(pet)}>Download</Btn>
           </Actions>

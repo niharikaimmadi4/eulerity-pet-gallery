@@ -69,6 +69,8 @@ export function AboutPage() {
           <li><strong>Search</strong> across title and description, debounced for snappy typing.</li>
           <li><strong>Four sort modes</strong>  A–Z, Z–A, newest, oldest.</li>
           <li><strong>Multi-select</strong> with selection that persists across every route.</li>
+          <li><strong>Favorites</strong>  hearted pets persist across page reloads via <code>localStorage</code>, synced across tabs.</li>
+          <li><strong>Lightbox</strong>  click any image for a full-screen preview; arrow keys cycle through the filtered set.</li>
           <li><strong>URL-as-state</strong>  search, sort, and pagination all live in the URL, so filtered views are bookmarkable and shareable.</li>
           <li><strong>Infinite scroll</strong> via <code>IntersectionObserver</code>, page size 8.</li>
           <li><strong>Keyboard-first ops</strong>  <code>/</code>, <code>j k h l</code>/arrows, <code>x</code>/Space, <code>a</code>, <code>Esc</code>, <code>?</code>, with an in-app cheat sheet.</li>

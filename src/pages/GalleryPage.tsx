@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Controls } from "../components/Controls";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
+import { Lightbox } from "../components/Lightbox";
 import { PetCard } from "../components/PetCard";
 import { Spinner } from "../components/Spinner";
 import { StatsStrip } from "../components/StatsStrip";
@@ -144,6 +145,7 @@ export function GalleryPage() {
   );
 
   const [focusIndex, setFocusIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const handleSort = (s: SortKey) => {
     setSearchParams(
@@ -229,6 +231,7 @@ export function GalleryPage() {
               sizeBytes={sizes[pet.url]}
               focused={index === focusIndex}
               onFocus={() => setFocusIndex(index)}
+              onOpenLightbox={() => setLightboxIndex(index)}
             />
           ))}
         </Grid>
@@ -237,6 +240,15 @@ export function GalleryPage() {
       <Sentinel ref={sentinelRef} aria-hidden="true" />
       {!hasMore && visible.length > 0 && (
         <FooterNote>That's all {filtered.length} pets.</FooterNote>
+      )}
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          pets={visible}
+          index={lightboxIndex}
+          onChange={setLightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
       )}
     </>
   );

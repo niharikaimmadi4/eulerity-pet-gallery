@@ -36,6 +36,8 @@ Every requirement from the spec, plus deliberate additions to answer the "get cr
 | Feature | What it does |
 |---|---|
 | **Dashboard summary strip** | Total / visible / selected / estimated size at the top of the gallery, updated live as filters change. |
+| **Lightbox with prev/next nav** | Click any image to open a full-screen preview; arrow keys cycle through the filtered set; Esc closes; body scroll locked while open. |
+| **Favorites with localStorage** | A second tier above selection. Hearts persist across page reloads and browser restarts, sync across open tabs via the `storage` event, and have their own `/favorites` route. |
 | **URL-synced state** (`?q=…&sort=…&page=…`) | Search, sort, and pagination all live in the URL. Filtered views are bookmarkable and shareable; refresh keeps your spot. |
 | **Keyboard shortcuts** | `/` focus search · `j k h l` / arrow keys move card focus · `x`/`Space` toggle select · `a` select all · `Esc` clear · `?` opens an in-app cheat sheet. |
 | **Bulk ZIP download** | One archive instead of N separate save prompts. Uses `jszip` client-side with a live `Zipping 12/40` progress counter and skip-on-failure. |

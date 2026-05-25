@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import type { Pet } from "../types/pet";
+import { useFavorites } from "../context/FavoritesContext";
 import { useSelection } from "../context/SelectionContext";
 import { formatBytes, formatDate } from "../utils/format";
 
@@ -26,12 +27,16 @@ const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
   }
 `;
 
-const Media = styled(Link)`
+const Media = styled.button`
   position: relative;
   display: block;
+  width: 100%;
   aspect-ratio: 4 / 3;
   background: ${({ theme }) => theme.colors.surfaceAlt};
   overflow: hidden;
+  border: 0;
+  padding: 0;
+  cursor: zoom-in;
 
   img {
     width: 100%;
@@ -40,6 +45,11 @@ const Media = styled(Link)`
     transition: transform 240ms ease;
   }
   &:hover img { transform: scale(1.04); }
+`;
+
+const TitleLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.text};
+  &:hover { color: ${({ theme }) => theme.colors.accent}; }
 `;
 
 const CheckLabel = styled.label`
@@ -59,6 +69,30 @@ const CheckLabel = styled.label`
   backdrop-filter: blur(6px);
 
   input { accent-color: ${({ theme }) => theme.colors.accent}; }
+`;
+
+const HeartButton = styled.button<{ $active: boolean }>`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: rgba(15, 17, 21, 0.7);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  line-height: 1;
+  color: ${({ $active, theme }) => ($active ? "#ff7c98" : theme.colors.textMuted)};
+  transition: transform 120ms ease, color 120ms ease;
+
+  &:hover {
+    transform: scale(1.08);
+    color: #ff7c98;
+  }
 `;
 
 const Body = styled.div`
@@ -98,24 +132,27 @@ interface Props {
   sizeBytes: number | null | undefined;
   focused?: boolean;
   onFocus?: () => void;
+  onOpenLightbox?: () => void;
 }
 
-export function PetCard({ pet, sizeBytes, focused = false, onFocus }: Props) {
+export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightbox }: Props) {
   const { isSelected, toggle } = useSelection();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
   const checked = isSelected(pet.id);
+  const favorited = isFavorite(pet.id);
 
   return (
     <Card
       $selected={checked}
       $focused={focused}
       role="listitem"
-      aria-label={`${pet.title}${checked ? ", selected" : ""}`}
+      aria-label={`${pet.title}${checked ? ", selected" : ""}${favorited ? ", favorited" : ""}`}
     >
       <Media
-        to={`/pets/${pet.id}`}
-        state={{ pet }}
+        type="button"
+        onClick={onOpenLightbox}
         onFocus={onFocus}
-        aria-label={`Open details for ${pet.title}`}
+        aria-label={`Open larger preview of ${pet.title}`}
       >
         <img src={pet.url} alt={pet.title} loading="lazy" />
         <CheckLabel
@@ -135,9 +172,27 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus }: Props) {
           />
           {checked ? "Selected" : "Select"}
         </CheckLabel>
+        <HeartButton
+          type="button"
+          $active={favorited}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFavorite(pet.id);
+          }}
+          aria-label={favorited ? `Unfavorite ${pet.title}` : `Favorite ${pet.title}`}
+          aria-pressed={favorited}
+          title={favorited ? "Unfavorite" : "Favorite"}
+        >
+          {favorited ? "♥" : "♡"}
+        </HeartButton>
       </Media>
       <Body>
-        <Title>{pet.title}</Title>
+        <Title>
+          <TitleLink to={`/pets/${pet.id}`} state={{ pet }}>
+            {pet.title}
+          </TitleLink>
+        </Title>
         <Desc>{pet.description}</Desc>
         <Meta>
           <span>{formatDate(pet.createdAt)}</span>

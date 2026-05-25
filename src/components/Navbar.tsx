@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { useFavorites } from "../context/FavoritesContext";
 import { useSelection } from "../context/SelectionContext";
 
 const Bar = styled.header`
@@ -78,6 +79,7 @@ const Badge = styled.span`
 
 export function Navbar() {
   const { count } = useSelection();
+  const { count: favCount } = useFavorites();
   return (
     <Bar>
       <Inner>
@@ -93,6 +95,12 @@ export function Navbar() {
             Selected{" "}
             {count > 0 && (
               <Badge aria-label={`${count} pets selected`}>{count}</Badge>
+            )}
+          </Link>
+          <Link to="/favorites">
+            Favorites{" "}
+            {favCount > 0 && (
+              <Badge aria-label={`${favCount} favorites`}>{favCount}</Badge>
             )}
           </Link>
           <Link to="/about">About</Link>
