@@ -7,6 +7,10 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: ${({ theme }) => theme.colors.bg};
+    background-image: ${({ theme }) => theme.gradients.halo};
+    background-repeat: no-repeat;
+    background-size: 100% 600px;
+    background-attachment: fixed;
     color: ${({ theme }) => theme.colors.text};
     -webkit-font-smoothing: antialiased;
   }
