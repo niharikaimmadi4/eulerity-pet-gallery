@@ -112,7 +112,9 @@ const NavArrow = styled.button<{ $side: "left" | "right" }>`
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.22);
   color: #ffffff;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -214,9 +216,9 @@ export function Lightbox({ pets, index, onClose, onChange }: Props) {
           onClick={() => hasPrev && onChange(index - 1)}
           disabled={!hasPrev}
           aria-label="Previous image"
-          title="Previous ()"
+          title="Previous (left arrow key)"
         >
-
+          {"←"}
         </NavArrow>
         <div className="imageHolder">
           <AnimatePresence mode="wait" initial={false}>
@@ -237,9 +239,9 @@ export function Lightbox({ pets, index, onClose, onChange }: Props) {
           onClick={() => hasNext && onChange(index + 1)}
           disabled={!hasNext}
           aria-label="Next image"
-          title="Next ()"
+          title="Next (right arrow key)"
         >
-
+          {"→"}
         </NavArrow>
       </Stage>
 
