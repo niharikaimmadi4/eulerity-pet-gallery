@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { Controls } from "../components/Controls";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
-import { HeroFeatured } from "../components/HeroFeatured";
 import { Lightbox } from "../components/Lightbox";
 import { PetCard } from "../components/PetCard";
 import { Spinner } from "../components/Spinner";
@@ -215,51 +214,39 @@ export function GalleryPage() {
       {visible.length === 0 ? (
         <EmptyState title="No matches" message={`Nothing matches "${debouncedQuery}".`} />
       ) : (
-        <>
-          {/* Hero shows the first visible pet; rest flow into the uniform
-              grid below so card sizing stays consistent. */}
-          {visible[0] && (
-            <HeroFeatured
-              pet={visible[0]}
-              sizeBytes={sizes[visible[0].url]}
-              onOpenLightbox={() => setLightboxIndex(0)}
-            />
-          )}
-          <Grid role="list">
-            <AnimatePresence mode="popLayout" initial={false}>
-              {visible.slice(1).map((pet, sliceIndex) => {
-                const index = sliceIndex + 1;
-                // Stagger only within each PAGE_SIZE batch so paginated-in
-                // cards still cascade, but the cascade resets per batch
-                // instead of growing unbounded.
-                const staggerDelay = (sliceIndex % PAGE_SIZE) * 0.025;
-                return (
-                  <motion.div
-                    key={pet.id}
-                    layout
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{
-                      layout: { type: "spring", stiffness: 300, damping: 30 },
-                      opacity: { duration: 0.22, delay: staggerDelay },
-                      y: { type: "spring", stiffness: 320, damping: 26, delay: staggerDelay },
-                    }}
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <PetCard
-                      pet={pet}
-                      sizeBytes={sizes[pet.url]}
-                      focused={index === focusIndex}
-                      onFocus={() => setFocusIndex(index)}
-                      onOpenLightbox={() => setLightboxIndex(index)}
-                    />
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </Grid>
-        </>
+        <Grid role="list">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {visible.map((pet, index) => {
+              // Stagger only within each PAGE_SIZE batch so paginated-in
+              // cards still cascade, but the cascade resets per batch
+              // instead of growing unbounded.
+              const staggerDelay = (index % PAGE_SIZE) * 0.025;
+              return (
+                <motion.div
+                  key={pet.id}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    layout: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.22, delay: staggerDelay },
+                    y: { type: "spring", stiffness: 320, damping: 26, delay: staggerDelay },
+                  }}
+                  style={{ display: "flex", flexDirection: "column" }}
+                >
+                  <PetCard
+                    pet={pet}
+                    sizeBytes={sizes[pet.url]}
+                    focused={index === focusIndex}
+                    onFocus={() => setFocusIndex(index)}
+                    onOpenLightbox={() => setLightboxIndex(index)}
+                  />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </Grid>
       )}
 
       <Sentinel ref={sentinelRef} aria-hidden="true" />
