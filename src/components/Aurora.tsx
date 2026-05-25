@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const drift1 = keyframes`
   0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
@@ -26,6 +26,30 @@ const Stage = styled.div`
   background: ${({ theme }) => theme.colors.bg};
 `;
 
+// Per-variant CSS chunks built with the styled-components `css` helper so
+// keyframes objects interpolate to their generated animation names instead
+// of stringifying to "[object Object]".
+const variantOneCss = css`
+  top: -20%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.55), transparent 60%);
+  animation: ${drift1} 22s ease-in-out infinite;
+`;
+
+const variantTwoCss = css`
+  top: 10%;
+  right: -20%;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.42), transparent 60%);
+  animation: ${drift2} 28s ease-in-out infinite;
+`;
+
+const variantThreeCss = css`
+  bottom: -30%;
+  left: 20%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.42), transparent 60%);
+  animation: ${drift3} 30s ease-in-out infinite;
+`;
+
 const Blob = styled.div<{ $variant: 1 | 2 | 3 }>`
   position: absolute;
   width: 60vmax;
@@ -37,29 +61,7 @@ const Blob = styled.div<{ $variant: 1 | 2 | 3 }>`
   will-change: transform;
 
   ${({ $variant }) =>
-    $variant === 1 &&
-    `
-    top: -20%;
-    left: -10%;
-    background: radial-gradient(circle, rgba(167, 139, 250, 0.55), transparent 60%);
-    animation: ${drift1} 22s ease-in-out infinite;
-  `}
-  ${({ $variant }) =>
-    $variant === 2 &&
-    `
-    top: 10%;
-    right: -20%;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.42), transparent 60%);
-    animation: ${drift2} 28s ease-in-out infinite;
-  `}
-  ${({ $variant }) =>
-    $variant === 3 &&
-    `
-    bottom: -30%;
-    left: 20%;
-    background: radial-gradient(circle, rgba(96, 165, 250, 0.42), transparent 60%);
-    animation: ${drift3} 30s ease-in-out infinite;
-  `}
+    $variant === 1 ? variantOneCss : $variant === 2 ? variantTwoCss : variantThreeCss}
 `;
 
 const Grain = styled.div`
