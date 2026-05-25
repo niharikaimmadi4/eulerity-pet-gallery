@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import { Aurora } from "./components/Aurora";
 import { Layout } from "./components/Layout";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { PetsProvider } from "./context/PetsContext";
@@ -18,7 +17,6 @@ export function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Aurora />
       <PetsProvider>
         <SelectionProvider>
           <FavoritesProvider>
