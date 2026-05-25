@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
@@ -231,16 +232,36 @@ export function GalleryPage() {
         <EmptyState title="No matches" message={`Nothing matches "${debouncedQuery}".`} />
       ) : (
         <Grid role="list">
-          {visible.map((pet, index) => (
-            <PetCard
-              key={pet.id}
-              pet={pet}
-              sizeBytes={sizes[pet.url]}
-              focused={index === focusIndex}
-              onFocus={() => setFocusIndex(index)}
-              onOpenLightbox={() => setLightboxIndex(index)}
-            />
-          ))}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {visible.map((pet, index) => {
+              // Stagger only within each PAGE_SIZE batch so paginated-in
+              // cards still cascade, but the cascade resets per batch
+              // instead of growing unbounded.
+              const staggerDelay = (index % PAGE_SIZE) * 0.025;
+              return (
+                <motion.div
+                  key={pet.id}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    layout: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.22, delay: staggerDelay },
+                    y: { type: "spring", stiffness: 320, damping: 26, delay: staggerDelay },
+                  }}
+                >
+                  <PetCard
+                    pet={pet}
+                    sizeBytes={sizes[pet.url]}
+                    focused={index === focusIndex}
+                    onFocus={() => setFocusIndex(index)}
+                    onOpenLightbox={() => setLightboxIndex(index)}
+                  />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </Grid>
       )}
 

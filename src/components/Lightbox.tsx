@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import type { Pet } from "../types/pet";
@@ -66,6 +67,14 @@ const Stage = styled.div`
   padding: 0 60px;
   overflow: hidden;
   min-height: 0;
+
+  .imageHolder {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
 
   img {
     max-width: 100%;
@@ -199,7 +208,19 @@ export function Lightbox({ pets, index, onClose, onChange }: Props) {
         >
 
         </NavArrow>
-        <img src={pet.url} alt={pet.title} />
+        <div className="imageHolder">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.img
+              key={pet.url}
+              src={pet.url}
+              alt={pet.title}
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.005 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            />
+          </AnimatePresence>
+        </div>
         <NavArrow
           type="button"
           $side="right"

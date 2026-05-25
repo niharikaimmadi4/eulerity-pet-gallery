@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import type { Pet } from "../types/pet";
 import { useFavorites } from "../context/FavoritesContext";
 import { useSelection } from "../context/SelectionContext";
@@ -71,7 +72,19 @@ const CheckLabel = styled.label`
   input { accent-color: ${({ theme }) => theme.colors.accent}; }
 `;
 
-const HeartButton = styled.button<{ $active: boolean }>`
+const heartBurst = keyframes`
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.45) rotate(-8deg); }
+  70%  { transform: scale(0.92) rotate(4deg); }
+  100% { transform: scale(1) rotate(0); }
+`;
+
+const ringPulse = keyframes`
+  0%   { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(2.4); opacity: 0; }
+`;
+
+const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
   position: absolute;
   top: 10px;
   right: 10px;
@@ -86,12 +99,33 @@ const HeartButton = styled.button<{ $active: boolean }>`
   place-items: center;
   font-size: 16px;
   line-height: 1;
-  color: ${({ $active, theme }) => ($active ? "#ff7c98" : theme.colors.textMuted)};
-  transition: transform 120ms ease, color 120ms ease;
+  color: ${({ $active }) => ($active ? "#ff7c98" : "rgba(255,255,255,0.7)")};
+  transition: color 160ms ease;
+
+  & > .glyph {
+    display: inline-block;
+    transform-origin: center;
+    will-change: transform;
+    animation: ${({ $burst }) => ($burst ? heartBurst : "none")} 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #ff7c98;
+    pointer-events: none;
+    opacity: 0;
+    animation: ${({ $burst }) => ($burst ? ringPulse : "none")} 500ms ease-out;
+  }
 
   &:hover {
-    transform: scale(1.08);
     color: #ff7c98;
+  }
+  &:hover > .glyph {
+    transform: scale(1.1);
+    transition: transform 160ms ease;
   }
 `;
 
@@ -141,6 +175,30 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
   const checked = isSelected(pet.id);
   const favorited = isFavorite(pet.id);
 
+  // Burst flag fires for ~400ms each time the heart is clicked, regardless
+  // of direction. Resets via timer so back-to-back clicks re-trigger.
+  const [burst, setBurst] = useState(false);
+  const burstTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (burstTimer.current) window.clearTimeout(burstTimer.current);
+    };
+  }, []);
+
+  const onHeartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(pet.id);
+    setBurst(false);
+    // Force a microtask gap so the animation re-triggers on consecutive clicks.
+    requestAnimationFrame(() => {
+      setBurst(true);
+      if (burstTimer.current) window.clearTimeout(burstTimer.current);
+      burstTimer.current = window.setTimeout(() => setBurst(false), 500);
+    });
+  };
+
   return (
     <Card
       $selected={checked}
@@ -175,16 +233,13 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
         <HeartButton
           type="button"
           $active={favorited}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleFavorite(pet.id);
-          }}
+          $burst={burst}
+          onClick={onHeartClick}
           aria-label={favorited ? `Unfavorite ${pet.title}` : `Favorite ${pet.title}`}
           aria-pressed={favorited}
           title={favorited ? "Unfavorite" : "Favorite"}
         >
-          {favorited ? "♥" : "♡"}
+          <span className="glyph">{favorited ? "♥" : "♡"}</span>
         </HeartButton>
       </Media>
       <Body>

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useCountUp } from "../hooks/useCountUp";
 import { formatBytes } from "../utils/format";
 
 const Wrap = styled.section`
@@ -101,6 +102,12 @@ export function StatsStrip({
   totalBytes,
   hasFilter,
 }: Props) {
+  // Smoothly animate each number to its new value when filters or selection change.
+  const animatedTotal = useCountUp(totalCount);
+  const animatedVisible = useCountUp(visibleCount);
+  const animatedSelected = useCountUp(selectedCount);
+  const animatedBytes = useCountUp(totalBytes);
+
   return (
     <Wrap aria-label="Gallery summary">
       <div>
@@ -114,19 +121,19 @@ export function StatsStrip({
       <Stats>
         <Stat>
           <Label>Total</Label>
-          <Value>{totalCount.toLocaleString()}</Value>
+          <Value>{animatedTotal.toLocaleString()}</Value>
         </Stat>
         <Stat>
           <Label>Visible</Label>
-          <Value>{visibleCount.toLocaleString()}</Value>
+          <Value>{animatedVisible.toLocaleString()}</Value>
         </Stat>
         <Stat>
           <Label>Selected</Label>
-          <Accent>{selectedCount.toLocaleString()}</Accent>
+          <Accent>{animatedSelected.toLocaleString()}</Accent>
         </Stat>
         <Stat>
           <Label>Est. size</Label>
-          <Value>{formatBytes(totalBytes)}</Value>
+          <Value>{formatBytes(animatedBytes)}</Value>
         </Stat>
       </Stats>
     </Wrap>
