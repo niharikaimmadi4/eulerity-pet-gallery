@@ -196,7 +196,7 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
         <Desc>{pet.description}</Desc>
         <Meta>
           <span>{formatDate(pet.createdAt)}</span>
-          <span>{formatBytes(sizeBytes ?? null)}</span>
+          {typeof sizeBytes === "number" && <span>{formatBytes(sizeBytes)}</span>}
         </Meta>
       </Body>
     </Card>

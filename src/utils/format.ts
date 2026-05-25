@@ -6,7 +6,9 @@ export function slugify(input: string): string {
 }
 
 export function formatBytes(bytes: number | null): string {
-  if (bytes === null || Number.isNaN(bytes)) return "—";
+  // null happens when the image host's CORS policy blocks reading
+  // the Content-Length header (common with cross-origin CDNs).
+  if (bytes === null || Number.isNaN(bytes)) return "Unknown";
   if (bytes === 0) return "0 B";
   const units = ["B", "KB", "MB", "GB"];
   const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));

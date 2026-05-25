@@ -124,7 +124,15 @@ export function PetDetailPage() {
             <dt>Added</dt>
             <dd>{formatDate(pet.createdAt)}</dd>
             <dt>File size</dt>
-            <dd>{formatBytes(size ?? null)}</dd>
+            <dd
+              title={
+                typeof size === "number"
+                  ? undefined
+                  : "The image host's CORS policy doesn't expose Content-Length, so the size can't be read from the browser."
+              }
+            >
+              {formatBytes(size ?? null)}
+            </dd>
             <dt>Source</dt>
             <dd>
               <a href={pet.url} target="_blank" rel="noreferrer">
