@@ -21,12 +21,26 @@ const Grid = styled.div`
   display: grid;
   gap: 18px;
   grid-template-columns: 1fr;
+  grid-auto-flow: dense;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, 1fr);
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
     grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 1fr;
+  }
+
+  /* Bento featured card: the first item takes a 2x2 block on desktop and
+     a 2x1 block on tablet so the gallery reads as more than a uniform grid. */
+  & > .bento-featured {
+    @media (min-width: ${({ theme }) => theme.breakpoints.tablet}) {
+      grid-column: span 2;
+    }
+    @media (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
   }
 `;
 
@@ -238,10 +252,12 @@ export function GalleryPage() {
               // cards still cascade, but the cascade resets per batch
               // instead of growing unbounded.
               const staggerDelay = (index % PAGE_SIZE) * 0.025;
+              const isFeatured = index === 0;
               return (
                 <motion.div
                   key={pet.id}
                   layout
+                  className={isFeatured ? "bento-featured" : undefined}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
@@ -256,6 +272,7 @@ export function GalleryPage() {
                     pet={pet}
                     sizeBytes={sizes[pet.url]}
                     focused={index === focusIndex}
+                    featured={isFeatured}
                     onFocus={() => setFocusIndex(index)}
                     onOpenLightbox={() => setLightboxIndex(index)}
                   />

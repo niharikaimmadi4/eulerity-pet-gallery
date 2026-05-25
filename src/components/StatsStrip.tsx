@@ -6,13 +6,15 @@ const Wrap = styled.section`
   position: relative;
   overflow: hidden;
   background: ${({ theme }) => theme.colors.surface};
+  backdrop-filter: blur(20px) saturate(140%);
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius};
-  padding: 20px 22px;
-  margin-bottom: 22px;
+  padding: 24px 26px;
+  margin-bottom: 24px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 20px;
+  box-shadow: ${({ theme }) => theme.shadowSoft};
 
   /* Soft brand gradient bleed to lift the strip off the page background. */
   &::after {
@@ -31,14 +33,19 @@ const Wrap = styled.section`
 
 const Title = styled.h1`
   margin: 0 0 6px;
-  font-size: 22px;
-  letter-spacing: -0.015em;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: ${({ theme }) => theme.gradients.brand};
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 `;
 
 const Subtitle = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.textMuted};
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 `;
 
@@ -63,17 +70,19 @@ const Stat = styled.div`
 `;
 
 const Label = styled.dt`
-  font-size: 11px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 10px;
+  color: ${({ theme }) => theme.colors.textSubtle};
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 500;
 `;
 
 const Value = styled.dd`
   margin: 0;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;

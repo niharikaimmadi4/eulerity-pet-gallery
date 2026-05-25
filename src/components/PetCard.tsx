@@ -7,35 +7,57 @@ import { useSelection } from "../context/SelectionContext";
 import { formatBytes, formatDate } from "../utils/format";
 
 const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
+  position: relative;
   background: ${({ theme }) => theme.colors.surface};
+  backdrop-filter: blur(20px) saturate(140%);
   border: 1px solid
     ${({ theme, $selected }) => ($selected ? theme.colors.accent : theme.colors.border)};
   border-radius: ${({ theme }) => theme.radius};
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* Ensure the card always fills its grid cell so every card in a row
-     has identical dimensions regardless of content. */
   height: 100%;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 220ms ease,
+    box-shadow 220ms ease;
   box-shadow: ${({ $selected, $focused, theme }) =>
     $focused
-      ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadow}`
+      ? `0 0 0 2px ${theme.colors.accent}, ${theme.shadow}`
       : $selected
-      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadow}`
-      : "none"};
+      ? `0 0 0 2px ${theme.colors.accent}55, ${theme.shadowSoft}`
+      : `inset 0 1px 0 rgba(255,255,255,0.04)`};
+
+  /* Spotlight: a radial highlight follows the cursor via CSS vars set on
+     pointermove. Sits above the card surface but below content. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: ${({ theme }) => theme.gradients.spotlight};
+    opacity: 0;
+    transition: opacity 220ms ease;
+    pointer-events: none;
+    z-index: 1;
+  }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: ${({ theme }) => theme.colors.borderStrong};
     box-shadow: ${({ theme }) => theme.shadow};
+  }
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
-const Media = styled.button`
+const Media = styled.button<{ $featured?: boolean }>`
   position: relative;
+  z-index: 2;
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  flex: ${({ $featured }) => ($featured ? "1" : "none")};
+  aspect-ratio: ${({ $featured }) => ($featured ? "auto" : "4 / 3")};
+  min-height: ${({ $featured }) => ($featured ? "260px" : "auto")};
   background: ${({ theme }) => theme.colors.surfaceAlt};
   overflow: hidden;
   border: 0;
@@ -46,9 +68,9 @@ const Media = styled.button`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 240ms ease;
+    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  &:hover img { transform: scale(1.04); }
+  &:hover img { transform: scale(1.05); }
 `;
 
 const TitleLink = styled(Link)`
@@ -58,21 +80,26 @@ const TitleLink = styled(Link)`
 
 const CheckLabel = styled.label`
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(15, 17, 21, 0.7);
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  background: rgba(11, 13, 22, 0.7);
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
-  padding: 6px 10px;
+  border-radius: 999px;
+  padding: 5px 12px 5px 8px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   color: ${({ theme }) => theme.colors.text};
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px) saturate(140%);
 
-  input { accent-color: ${({ theme }) => theme.colors.accent}; }
+  input {
+    accent-color: ${({ theme }) => theme.colors.accent};
+    margin: 0;
+  }
 `;
 
 const heartBurst = keyframes`
@@ -89,14 +116,15 @@ const ringPulse = keyframes`
 
 const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
   width: 34px;
   height: 34px;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.colors.border};
-  background: rgba(15, 17, 21, 0.7);
-  backdrop-filter: blur(6px);
+  background: rgba(11, 13, 22, 0.7);
+  backdrop-filter: blur(10px) saturate(140%);
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -133,60 +161,70 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
 `;
 
 const Body = styled.div`
-  padding: 14px 16px 16px;
+  position: relative;
+  z-index: 2;
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  /* Equal-sized cards: body stretches and meta is pinned to bottom
-     so a 1-line description and a 2-line description still produce
-     identical card heights with identical baselines. */
+  /* Equal-sized cards: body stretches and meta is pinned to bottom. */
 `;
 
-const Title = styled.h3`
+const Title = styled.h3<{ $featured?: boolean }>`
   margin: 0;
-  font-size: 16px;
-  line-height: 1.3;
-  /* Always exactly one line  ellipsis on overflow so the title row
-     never pushes the description down inconsistently. */
+  font-size: ${({ $featured }) => ($featured ? "22px" : "15px")};
+  font-weight: ${({ $featured }) => ($featured ? "700" : "600")};
+  letter-spacing: ${({ $featured }) => ($featured ? "-0.02em" : "-0.01em")};
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const Desc = styled.p`
+const Desc = styled.p<{ $featured?: boolean }>`
   margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: ${({ $featured }) => ($featured ? "14px" : "13px")};
+  line-height: 1.5;
   color: ${({ theme }) => theme.colors.textMuted};
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: ${({ $featured }) => ($featured ? 3 : 2)};
   -webkit-box-orient: vertical;
   overflow: hidden;
-  /* Reserve exactly two lines of vertical space whether the description
-     is one line or two. Without this, shorter descriptions create
-     visible whitespace imbalance between cards. */
-  min-height: calc(13px * 1.45 * 2);
+  min-height: ${({ $featured }) =>
+    $featured ? "calc(14px * 1.5 * 3)" : "calc(13px * 1.5 * 2)"};
 `;
 
 const Meta = styled.div`
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 10px;
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.textMuted};
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.textSubtle};
 `;
 
 interface Props {
   pet: Pet;
   sizeBytes: number | null | undefined;
   focused?: boolean;
+  featured?: boolean;
   onFocus?: () => void;
   onOpenLightbox?: () => void;
 }
 
-export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightbox }: Props) {
+export function PetCard({
+  pet,
+  sizeBytes,
+  focused = false,
+  featured = false,
+  onFocus,
+  onOpenLightbox,
+}: Props) {
   const { isSelected, toggle } = useSelection();
   const { isFavorite, toggle: toggleFavorite } = useFavorites();
   const checked = isSelected(pet.id);
@@ -203,6 +241,17 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
     };
   }, []);
 
+  // Track cursor position over the card so the spotlight pseudo-element
+  // can follow it. Uses CSS custom properties to avoid re-rendering.
+  const cardRef = useRef<HTMLElement | null>(null);
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
+  };
+
   const onHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -218,13 +267,16 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
 
   return (
     <Card
+      ref={cardRef}
       $selected={checked}
       $focused={focused}
       role="listitem"
+      onPointerMove={onPointerMove}
       aria-label={`${pet.title}${checked ? ", selected" : ""}${favorited ? ", favorited" : ""}`}
     >
       <Media
         type="button"
+        $featured={featured}
         onClick={onOpenLightbox}
         onFocus={onFocus}
         aria-label={`Open larger preview of ${pet.title}`}
@@ -260,12 +312,12 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
         </HeartButton>
       </Media>
       <Body>
-        <Title>
+        <Title $featured={featured}>
           <TitleLink to={`/pets/${pet.id}`} state={{ pet }}>
             {pet.title}
           </TitleLink>
         </Title>
-        <Desc>{pet.description}</Desc>
+        <Desc $featured={featured}>{pet.description}</Desc>
         <Meta>
           <span>{formatDate(pet.createdAt)}</span>
           {typeof sizeBytes === "number" && <span>{formatBytes(sizeBytes)}</span>}

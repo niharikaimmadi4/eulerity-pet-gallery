@@ -1,14 +1,23 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+  @import url("https://rsms.me/inter/inter.css");
+  @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap");
+
   *, *::before, *::after { box-sizing: border-box; }
   html, body, #root { height: 100%; }
+  html {
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: ${({ theme }) => theme.font.body};
     background: ${({ theme }) => theme.colors.bg};
     color: ${({ theme }) => theme.colors.text};
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+    overflow-x: hidden;
   }
   a { color: ${({ theme }) => theme.colors.accent}; text-decoration: none; }
   a:hover { color: ${({ theme }) => theme.colors.accentHover}; }
@@ -18,7 +27,7 @@ export const GlobalStyle = createGlobalStyle`
   /* Accessibility: visible focus ring for keyboard users only. */
   :focus { outline: none; }
   :focus-visible {
-    outline: 3px solid ${({ theme }) => theme.colors.accent};
+    outline: 2px solid ${({ theme }) => theme.colors.accent};
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -32,4 +41,19 @@ export const GlobalStyle = createGlobalStyle`
       scroll-behavior: auto !important;
     }
   }
+
+  /* Selection color. */
+  ::selection {
+    background: ${({ theme }) => theme.colors.accent};
+    color: #0a0b10;
+  }
+
+  /* Scrollbar polish. */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
 `;

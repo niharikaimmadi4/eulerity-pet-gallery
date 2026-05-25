@@ -8,15 +8,19 @@ import { formatBytes } from "../utils/format";
 
 const Bar = styled.div<{ $visible: boolean }>`
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transform: translateY(${({ $visible }) => ($visible ? "0" : "120%")});
-  transition: transform 220ms ease;
-  background: ${({ theme }) => theme.colors.surface};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  transform: translateY(${({ $visible }) => ($visible ? "0" : "calc(100% + 32px)")});
+  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(11, 13, 22, 0.7);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid ${({ theme }) => theme.colors.borderStrong};
+  border-radius: ${({ theme }) => theme.radius};
   box-shadow: ${({ theme }) => theme.shadow};
   z-index: 20;
+  max-width: 1280px;
+  margin: 0 auto;
 `;
 
 const Inner = styled.div`

@@ -7,8 +7,8 @@ const Bar = styled.header`
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(12px);
-  background: rgba(10, 13, 20, 0.78);
+  backdrop-filter: blur(20px) saturate(160%);
+  background: rgba(7, 8, 12, 0.65);
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 
   /* Subtle gradient bleed for visual depth without a hard band. */
