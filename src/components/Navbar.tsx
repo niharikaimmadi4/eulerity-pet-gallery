@@ -28,6 +28,13 @@ const Inner = styled.div`
   display: flex;
   align-items: center;
   gap: 24px;
+  flex-wrap: wrap;
+  position: relative;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: 10px 16px;
+    gap: 10px;
+  }
 `;
 
 const Brand = styled(NavLink)`
@@ -38,6 +45,8 @@ const Brand = styled(NavLink)`
   align-items: center;
   gap: 10px;
   letter-spacing: -0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   .mark {
     width: 28px;
@@ -47,6 +56,7 @@ const Brand = styled(NavLink)`
     display: grid;
     place-items: center;
     font-size: 16px;
+    flex-shrink: 0;
   }
   &:hover { color: ${({ theme }) => theme.colors.accent}; }
 `;
@@ -55,11 +65,24 @@ const Links = styled.nav`
   display: flex;
   gap: 18px;
   margin-left: auto;
+  flex-wrap: wrap;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 14px;
+  }
 `;
 
 const Link = styled(NavLink)`
   color: ${({ theme }) => theme.colors.textMuted};
   font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   &.active { color: ${({ theme }) => theme.colors.accent}; }
 `;
 
