@@ -319,7 +319,10 @@ export function GalleryPage() {
 
       {lightboxIndex !== null && (
         <Lightbox
-          pets={visible}
+          // Full filtered set (not just the loaded `visible` slice) so the
+          // counter reads "of 21" and arrows cycle through every match.
+          // `visible` is a prefix of `filtered`, so the clicked index aligns.
+          pets={filtered}
           index={lightboxIndex}
           onChange={setLightboxIndex}
           onClose={() => setLightboxIndex(null)}

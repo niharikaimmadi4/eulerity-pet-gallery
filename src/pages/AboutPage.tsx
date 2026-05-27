@@ -5,6 +5,8 @@ const Wrap = styled.article`
   display: flex;
   flex-direction: column;
   gap: 18px;
+  /* Inherited by all prose below: avoids lone-word last lines (widows). */
+  text-wrap: pretty;
 
   h1 {
     margin: 0;
@@ -76,7 +78,7 @@ export function AboutPage() {
       <Card>
         <h2>Features</h2>
         <ul>
-          <li><strong>Dashboard summary strip</strong>  total / visible / selected / estimated size, updated live as filters change.</li>
+          <li><strong>Live counts</strong>  the result count updates as you search, and the selection bar shows a running count plus estimated total download size.</li>
           <li><strong>Search</strong> across title and description, debounced for snappy typing.</li>
           <li><strong>Four sort modes</strong>  A–Z, Z–A, newest, oldest.</li>
           <li><strong>Multi-select</strong> with selection that persists across every route.</li>
@@ -134,10 +136,10 @@ export function AboutPage() {
         <h2>About me</h2>
         <Prose>
           <p>
-            <strong>Niharika Immadi</strong>, MS Computer Science (AI/ML), Cal State
-            East Bay. An AI-first web development engineer with 4+ years shipping
-            production React and TypeScript frontends, paired with custom LLM automation
-            and agentic tooling wired straight into forms and internal APIs.
+            <strong>Niharika Immadi</strong>, an AI-first web development engineer with
+            4+ years shipping production React and TypeScript frontends, paired with
+            custom LLM automation and agentic tooling wired straight into forms and
+            internal APIs.
           </p>
           <p>
             I work hands-on with the Claude and OpenAI APIs, build autonomous agents,

@@ -44,6 +44,7 @@ const Title = styled.h1`
   margin: 0;
   font-size: 32px;
   line-height: 1.2;
+  text-wrap: balance;
 `;
 
 const Description = styled.p`
@@ -51,6 +52,7 @@ const Description = styled.p`
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.5;
   margin: 0;
+  text-wrap: pretty;
 `;
 
 const MetaList = styled.dl`
