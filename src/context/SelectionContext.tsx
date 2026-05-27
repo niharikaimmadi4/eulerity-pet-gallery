@@ -51,6 +51,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook intentionally co-located with its provider
 export function useSelection(): SelectionContextValue {
   const ctx = useContext(SelectionContext);
   if (!ctx) throw new Error("useSelection must be used inside <SelectionProvider>");

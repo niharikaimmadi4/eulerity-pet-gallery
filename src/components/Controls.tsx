@@ -14,47 +14,57 @@ const Row = styled.div`
 `;
 
 const Search = styled.input`
-  background: ${({ theme }) => theme.colors.surface};
+  background: ${({ theme }) => theme.glass.bg};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
   color: ${({ theme }) => theme.colors.text};
-  border: 0;
+  border: 1px solid ${({ theme }) => theme.glass.border};
   border-radius: ${({ theme }) => theme.radiusPill};
   padding: 14px 22px;
   font-size: 14px;
   outline: none;
   width: 100%;
-  box-shadow: ${({ theme }) => theme.shadows.pressed};
-  transition: box-shadow 200ms ease;
+  box-shadow: ${({ theme }) => theme.glass.shadow};
+  transition: box-shadow 200ms ease, border-color 200ms ease;
 
   &::placeholder { color: ${({ theme }) => theme.colors.textMuted}; }
   &:focus {
+    border-color: ${({ theme }) => theme.colors.accent};
     box-shadow:
-      ${({ theme }) => theme.shadows.pressed},
+      ${({ theme }) => theme.glass.shadow},
       0 0 0 3px ${({ theme }) => theme.colors.accentMuted};
   }
 `;
 
 const Select = styled.select`
-  background: ${({ theme }) => theme.colors.surface};
+  background: ${({ theme }) => theme.glass.bgStrong};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
   color: ${({ theme }) => theme.colors.text};
-  border: 0;
+  border: 1px solid ${({ theme }) => theme.glass.border};
   border-radius: ${({ theme }) => theme.radiusPill};
   padding: 12px 18px;
   font-size: 14px;
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
-  transition: box-shadow 200ms ease;
+  box-shadow: ${({ theme }) => theme.glass.shadow};
+  transition: box-shadow 200ms ease, transform 160ms ease;
 
-  &:hover { box-shadow: ${({ theme }) => theme.shadows.raised}; }
+  &:hover { transform: translateY(-1px); box-shadow: ${({ theme }) => theme.glass.shadowHover}; }
 `;
 
 const Btn = styled.button<{ $variant?: "ghost" | "primary" }>`
   background: ${({ theme, $variant }) =>
-    $variant === "primary" ? theme.colors.accent : theme.colors.surface};
+    $variant === "primary" ? theme.gradients.brand : theme.glass.bgStrong};
+  backdrop-filter: ${({ $variant, theme }) =>
+    $variant === "primary" ? "none" : theme.glass.blur};
+  -webkit-backdrop-filter: ${({ $variant, theme }) =>
+    $variant === "primary" ? "none" : theme.glass.blur};
   color: ${({ theme, $variant }) =>
     $variant === "primary" ? "white" : theme.colors.text};
-  border: 0;
+  border: 1px solid
+    ${({ theme, $variant }) => ($variant === "primary" ? "transparent" : theme.glass.border)};
   border-radius: ${({ theme }) => theme.radiusPill};
   padding: 12px 20px;
   font-size: 13px;
@@ -62,16 +72,16 @@ const Btn = styled.button<{ $variant?: "ghost" | "primary" }>`
   cursor: pointer;
   box-shadow: ${({ theme, $variant }) =>
     $variant === "primary"
-      ? "0 6px 16px rgba(255, 122, 107, 0.35)"
-      : theme.shadows.raisedSmall};
+      ? "0 8px 22px rgba(255, 122, 107, 0.40)"
+      : theme.glass.shadow};
   transition: box-shadow 200ms ease, transform 160ms ease;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: ${({ theme, $variant }) =>
       $variant === "primary"
-        ? "0 10px 20px rgba(255, 122, 107, 0.4)"
-        : theme.shadows.raised};
+        ? "0 14px 30px rgba(255, 122, 107, 0.46)"
+        : theme.glass.shadowHover};
   }
 `;
 
@@ -118,7 +128,7 @@ export function Controls({
       </Select>
       <div style={{ display: "flex", gap: 8 }}>
         <Btn onClick={onSelectAll} $variant="primary">
-          Select all visible
+          Select all
         </Btn>
         <Btn onClick={onClear}>Clear</Btn>
       </div>

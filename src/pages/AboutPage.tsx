@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrap = styled.article`
-  max-width: 760px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -33,10 +33,21 @@ const Lede = styled.p`
 `;
 
 const Card = styled.section`
-  background: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.glass.bg};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
+  border: 1px solid ${({ theme }) => theme.glass.border};
   border-radius: ${({ theme }) => theme.radius};
+  box-shadow: ${({ theme }) => theme.glass.shadow}, ${({ theme }) => theme.glass.sheen};
   padding: 22px 24px;
+`;
+
+const Prose = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  strong { color: ${({ theme }) => theme.colors.accent}; font-weight: 600; }
 `;
 
 export function AboutPage() {
@@ -121,11 +132,28 @@ export function AboutPage() {
 
       <Card>
         <h2>About me</h2>
-        <p>
-          Niharika Immadi  MS Computer Science (AI/ML), Cal State East Bay. I enjoy
-          building product surfaces that feel obvious to use, then quietly defending them
-          with strong types, accessibility defaults, and observability.
-        </p>
+        <Prose>
+          <p>
+            <strong>Niharika Immadi</strong>, MS Computer Science (AI/ML), Cal State
+            East Bay. An AI-first web development engineer with 4+ years shipping
+            production React and TypeScript frontends, paired with custom LLM automation
+            and agentic tooling wired straight into forms and internal APIs.
+          </p>
+          <p>
+            I work hands-on with the Claude and OpenAI APIs, build autonomous agents,
+            and treat AI as a collaborator rather than a crutch: drafting fast, then
+            reviewing every line of its output rigorously before it ships. Comfortable
+            across the whole stack, HTML, CSS, JavaScript, REST and GraphQL, plus Java
+            backend and SDK work, and I own the full PR lifecycle while keeping shared
+            architecture consistent across teams.
+          </p>
+          <p>
+            The cool part: this gallery is a working sample of how I build. Strict types
+            end to end, keyboard-first navigation, accessible by default, URL-shareable
+            state, and a neumorphic surface that stays calm under load. Obvious to use on
+            the outside, quietly over-engineered where it counts.
+          </p>
+        </Prose>
       </Card>
     </Wrap>
   );

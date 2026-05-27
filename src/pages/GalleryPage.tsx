@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Controls } from "../components/Controls";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
@@ -16,6 +16,7 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import type { Pet, SortKey } from "../types/pet";
 
+// Responsive grid: 1 column on mobile, 2 on tablet, 4 on desktop.
 const Grid = styled.div`
   display: grid;
   gap: 18px;
@@ -26,6 +27,59 @@ const Grid = styled.div`
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
     grid-template-columns: repeat(4, 1fr);
+  }
+`;
+
+// Continuously slides the gradient across the letters, an aurora that keeps
+// drifting through the title.
+const flow = keyframes`
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
+// One-shot entrance: rise up and fade in on load.
+const rise = keyframes`
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+`;
+
+const Hero = styled.header`
+  margin-bottom: 28px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(36px, 6vw, 58px);
+    line-height: 1.03;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    text-wrap: balance;
+    background: linear-gradient(
+      110deg,
+      #ff7a6b 0%,
+      #ff8d80 22%,
+      #8a8cf0 50%,
+      #ff8d80 78%,
+      #ff7a6b 100%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Entrance (runs once, holds final state) + endless gradient drift. */
+    animation: ${rise} 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      ${flow} 7s ease-in-out infinite;
+  }
+  p {
+    margin: 0 auto;
+    max-width: 480px;
+    color: ${({ theme }) => theme.colors.textMuted};
+    font-size: 17px;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    animation: ${rise} 620ms cubic-bezier(0.2, 0.8, 0.2, 1) 130ms both;
   }
 `;
 
@@ -51,6 +105,7 @@ function readSort(value: string | null): SortKey {
 
 function applyFilters(pets: Pet[], query: string, sort: SortKey): Pet[] {
   const q = query.trim().toLowerCase();
+  // Filter by title or description (per the brief).
   const filtered = q
     ? pets.filter(
         (p) =>
@@ -65,15 +120,16 @@ function applyFilters(pets: Pet[], query: string, sort: SortKey): Pet[] {
       case "za":
         return b.title.localeCompare(a.title);
       case "newest": {
-        // Tiebreaker: when timestamps tie (the API gives every pet the same
-        // created date), fall back to A-Z so the ordering is deterministic
-        // and visibly differs from "oldest first".
+        // The API returns an identical `created` timestamp for every pet, so
+        // date diff is effectively always 0. Fall back to the original API
+        // order (newest = order the API returned them in) so the mode is
+        // deterministic and visibly differs from the alphabetical sorts.
         const diff = b.createdAt.getTime() - a.createdAt.getTime();
-        return diff !== 0 ? diff : a.title.localeCompare(b.title);
+        return diff !== 0 ? diff : a.order - b.order;
       }
       case "oldest": {
         const diff = a.createdAt.getTime() - b.createdAt.getTime();
-        return diff !== 0 ? diff : b.title.localeCompare(a.title);
+        return diff !== 0 ? diff : b.order - a.order;
       }
     }
   });
@@ -119,7 +175,10 @@ export function GalleryPage() {
     [pets, debouncedQuery, urlSort],
   );
 
-  const visible = filtered.slice(0, urlPage * PAGE_SIZE);
+  const visible = useMemo(
+    () => filtered.slice(0, urlPage * PAGE_SIZE),
+    [filtered, urlPage],
+  );
   const hasMore = visible.length < filtered.length;
 
   const bumpPage = useCallback(() => {
@@ -178,7 +237,7 @@ export function GalleryPage() {
       if (query) handleQueryChange("");
       else clear();
     },
-    onSelectAllVisible: () => selectMany(visible.map((p) => p.id)),
+    onSelectAllVisible: () => selectMany(filtered.map((p) => p.id)),
     onMoveFocus: (delta) => {
       setFocusIndex((i) => Math.max(0, Math.min(visible.length - 1, i + delta)));
     },
@@ -200,12 +259,16 @@ export function GalleryPage() {
 
   return (
     <>
+      <Hero>
+        <h1>Pet Folio</h1>
+        <p>Find your favorites. Take them home.</p>
+      </Hero>
       <Controls
         query={query}
         onQueryChange={handleQueryChange}
         sort={urlSort}
         onSortChange={handleSort}
-        onSelectAll={() => selectMany(visible.map((p) => p.id))}
+        onSelectAll={() => selectMany(filtered.map((p) => p.id))}
         onClear={clear}
         totalShown={filtered.length}
         searchInputId="gallery-search"

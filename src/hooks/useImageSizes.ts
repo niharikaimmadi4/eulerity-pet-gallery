@@ -35,6 +35,12 @@ async function measureSize(url: string, signal: AbortSignal): Promise<number | n
 }
 
 export function useImageSizes(urls: string[]): SizeMap {
+  // Key the effect on the URL set's *content*, not the array reference.
+  // Callers derive `urls` fresh on every render, so depending on the array
+  // identity would re-run the effect (and re-set state) every render, which
+  // spins into an infinite update loop.
+  const key = urls.join("\n");
+
   const [sizes, setSizes] = useState<SizeMap>(() => {
     const initial: SizeMap = {};
     for (const url of urls) {
@@ -48,11 +54,17 @@ export function useImageSizes(urls: string[]): SizeMap {
     const missing = urls.filter((u) => cache[u] === undefined);
     if (missing.length === 0) {
       // Even when nothing is missing, sync local state to the cache in case
-      // background fetches resolved while this consumer was mounted.
-      setSizes(() => {
+      // background fetches resolved while this consumer was mounted. Return
+      // the previous object unchanged when nothing actually differs so we
+      // don't trigger a needless re-render.
+      setSizes((prev) => {
+        let changed = Object.keys(prev).length !== urls.length;
         const next: SizeMap = {};
-        for (const u of urls) next[u] = cache[u] ?? null;
-        return next;
+        for (const u of urls) {
+          next[u] = cache[u] ?? null;
+          if (prev[u] !== next[u]) changed = true;
+        }
+        return changed ? next : prev;
       });
       return;
     }
@@ -74,7 +86,10 @@ export function useImageSizes(urls: string[]): SizeMap {
       cancelled = true;
       controller.abort();
     };
-  }, [urls]);
+    // `urls` is intentionally omitted: `key` already captures its content,
+    // and depending on the array reference would re-run this every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
   return sizes;
 }

@@ -80,6 +80,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook intentionally co-located with its provider
 export function useFavorites(): FavoritesContextValue {
   const ctx = useContext(FavoritesContext);
   if (!ctx) throw new Error("useFavorites must be used inside <FavoritesProvider>");

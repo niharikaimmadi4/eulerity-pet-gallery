@@ -85,7 +85,9 @@ export function SelectionToolbar() {
 
   const known = urls.map((u) => sizes[u]).filter((v): v is number => typeof v === "number");
   const totalKnown = known.reduce((a, b) => a + b, 0);
-  const unknownCount = urls.length - known.length;
+  // Folded into the ZIP button label so the size reads as part of the download
+  // action rather than as a stray figure floating between the buttons.
+  const sizeSuffix = known.length === 0 ? "" : ` · ~${formatBytes(totalKnown)}`;
 
   // Reset busy/progress when selection clears mid-flight.
   useEffect(() => {
@@ -122,13 +124,6 @@ export function SelectionToolbar() {
           <strong>
             {count} pet{count === 1 ? "" : "s"} selected
           </strong>
-          <span>
-            {known.length === 0
-              ? "Size unavailable"
-              : unknownCount === 0
-              ? `~${formatBytes(totalKnown)}`
-              : `~${formatBytes(totalKnown)} (${unknownCount} of ${urls.length} unavailable)`}
-          </span>
           {progress && busy === "zip" && (
             <Progress>
               Zipping {progress.completed + progress.failed}/{progress.total}
@@ -144,7 +139,7 @@ export function SelectionToolbar() {
           {busy === "individual" ? "Downloading" : "Download individually"}
         </Btn>
         <Btn $variant="primary" onClick={onZip} disabled={busy !== null}>
-          {busy === "zip" ? "Zipping" : `Download ${count} as ZIP`}
+          {busy === "zip" ? "Zipping" : `Download ${count} as ZIP${sizeSuffix}`}
         </Btn>
       </Inner>
     </Bar>

@@ -1,6 +1,6 @@
-# Pet Gallery  Eulerity Hackathon
+# Pet Folio, Eulerity Hackathon
 
-A small, polished front-end project built for the [Eulerity hackathon](https://eulerity-hackathon.appspot.com/web.html). It loads pets from the `/pets` endpoint and lets you search, sort, multi-select, and download them — with selection that survives navigation, URL-shareable filtered views, keyboard-first navigation, and accessibility built in.
+A small, polished front-end project built for the [Eulerity hackathon](https://eulerity-hackathon.appspot.com/web.html). It loads pets from the `/pets` endpoint and lets you search, sort, multi-select, and download them, with selection that survives navigation, URL-shareable filtered views, keyboard-first navigation, and accessibility built in.
 
 ## Stack
 

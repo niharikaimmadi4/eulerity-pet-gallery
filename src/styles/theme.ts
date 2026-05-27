@@ -24,10 +24,39 @@ export const theme = {
     nmLight: "rgba(255, 255, 255, 0.95)",
     nmDark: "rgba(174, 174, 192, 0.45)",
   },
+  // Frosted-glass surfaces. Translucent white + backdrop blur over the
+  // gradient-mesh background give the premium "light glass" look. The mesh
+  // showing through is what separates this from flat cards.
+  glass: {
+    bg: "rgba(255, 255, 255, 0.55)",
+    bgStrong: "rgba(255, 255, 255, 0.72)",
+    bgSubtle: "rgba(255, 255, 255, 0.38)",
+    border: "rgba(255, 255, 255, 0.7)",
+    blur: "blur(22px) saturate(165%)",
+    blurStrong: "blur(30px) saturate(180%)",
+    // A faint top highlight (inset) sells the glass edge catching light.
+    sheen: "inset 0 1px 0 rgba(255, 255, 255, 0.85)",
+    shadow:
+      "0 10px 36px rgba(86, 88, 150, 0.14), 0 2px 8px rgba(86, 88, 150, 0.06)",
+    shadowHover:
+      "0 22px 64px rgba(86, 88, 150, 0.22), 0 6px 16px rgba(86, 88, 150, 0.10)",
+  },
   gradients: {
     brand: "linear-gradient(135deg, #ff8d80 0%, #ff7a6b 60%, #ff6859 100%)",
     secondary: "linear-gradient(135deg, #a4a6f5 0%, #8a8cf0 100%)",
     surface: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%)",
+    // Aurora wash as a single smooth VERTICAL gradient. Stretched over the
+    // full document height on #root, so scrolling down moves continuously
+    // through coral -> lilac -> violet -> sky. A linear gradient cannot band
+    // or seam. A faint diagonal coral glow on top adds organic warmth without
+    // introducing any hard edge (it fades to its own zero-alpha hue).
+    mesh:
+      "radial-gradient(120% 80% at 85% 0%, rgba(255, 138, 128, 0.16) 0%, rgba(255, 138, 128, 0) 55%)," +
+      "linear-gradient(180deg," +
+        "rgba(255, 138, 128, 0.14) 0%," +
+        "rgba(214, 158, 198, 0.11) 30%," +
+        "rgba(150, 150, 235, 0.11) 60%," +
+        "rgba(120, 190, 240, 0.13) 100%)",
   },
   shadows: {
     // Raised: standard neumorphic extrusion.
@@ -57,6 +86,8 @@ export const theme = {
 export type Theme = typeof theme;
 
 declare module "styled-components" {
-
+  // Empty body is required: this merely binds styled-components' DefaultTheme
+  // to our Theme type via module augmentation.
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultTheme extends Theme {}
 }

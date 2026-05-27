@@ -8,31 +8,33 @@ import { formatBytes, formatDate } from "../utils/format";
 
 const Card = styled.article<{ $selected: boolean; $focused: boolean }>`
   position: relative;
-  background: ${({ theme }) => theme.colors.surface};
+  background: ${({ theme }) => theme.glass.bg};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
+  border: 1px solid ${({ theme }) => theme.glass.border};
   border-radius: ${({ theme }) => theme.radius};
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
-  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 280ms ease;
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 300ms ease, border-color 300ms ease;
 
-  /* Neumorphic raised extrusion: light from top-left, dark from
-     bottom-right. Only the keyboard-focused state gets an accent ring
-     so it stays visible during keyboard navigation. The "Selected"
-     state is communicated by the pill on the card itself, not by a
-     full-card border. */
+  /* Frosted-glass surface lifted off the mesh with a soft, colored drop.
+     Keyboard focus adds an accent ring; the "Selected" state is shown by
+     the pill on the card, not a full-card border. */
   box-shadow: ${({ $focused, theme }) =>
     $focused
-      ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raised}`
-      : theme.shadows.raised};
+      ? `0 0 0 3px ${theme.colors.accent}, ${theme.glass.shadow}, ${theme.glass.sheen}`
+      : `${theme.glass.shadow}, ${theme.glass.sheen}`};
 
   &:hover {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.9);
     box-shadow: ${({ $focused, theme }) =>
       $focused
-        ? `0 0 0 3px ${theme.colors.accent}, ${theme.shadows.raisedLarge}`
-        : theme.shadows.raisedLarge};
+        ? `0 0 0 3px ${theme.colors.accent}, ${theme.glass.shadowHover}, ${theme.glass.sheen}`
+        : `${theme.glass.shadowHover}, ${theme.glass.sheen}`};
   }
 `;
 
@@ -68,7 +70,10 @@ const CheckLabel = styled.label<{ $checked: boolean }>`
   left: 12px;
   z-index: 2;
   background: ${({ $checked, theme }) =>
-    $checked ? theme.colors.accent : theme.colors.surface};
+    $checked ? theme.colors.accent : theme.glass.bgStrong};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
+  border: 1px solid ${({ $checked, theme }) => ($checked ? "transparent" : theme.glass.border)};
   border-radius: ${({ theme }) => theme.radiusPill};
   padding: 6px 14px 6px 10px;
   display: inline-flex;
@@ -78,10 +83,10 @@ const CheckLabel = styled.label<{ $checked: boolean }>`
   font-size: 12px;
   font-weight: 600;
   color: ${({ $checked, theme }) => ($checked ? "white" : theme.colors.text)};
-  box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
+  box-shadow: ${({ theme }) => theme.glass.shadow};
   transition: background 200ms ease, color 200ms ease, box-shadow 200ms ease;
 
-  &:hover { box-shadow: ${({ theme }) => theme.shadows.raised}; }
+  &:hover { box-shadow: ${({ theme }) => theme.glass.shadowHover}; }
 
   /* Hide the native checkbox; the pill itself + custom box do the visual job. */
   input { position: absolute; opacity: 0; pointer-events: none; }
@@ -123,10 +128,11 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 0;
-  background: ${({ theme }) => theme.colors.surface};
-  box-shadow: ${({ theme, $active }) =>
-    $active ? theme.shadows.pressed : theme.shadows.raisedSmall};
+  border: 1px solid ${({ theme }) => theme.glass.border};
+  background: ${({ theme }) => theme.glass.bgStrong};
+  backdrop-filter: ${({ theme }) => theme.glass.blur};
+  -webkit-backdrop-filter: ${({ theme }) => theme.glass.blur};
+  box-shadow: ${({ theme }) => theme.glass.shadow};
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -155,8 +161,7 @@ const HeartButton = styled.button<{ $active: boolean; $burst: boolean }>`
 
   &:hover {
     color: ${({ theme }) => theme.colors.accent};
-    box-shadow: ${({ theme, $active }) =>
-      $active ? theme.shadows.pressed : theme.shadows.raised};
+    box-shadow: ${({ theme }) => theme.glass.shadowHover};
   }
   &:hover > .glyph {
     transform: scale(1.1);
@@ -261,39 +266,44 @@ export function PetCard({ pet, sizeBytes, focused = false, onFocus, onOpenLightb
         aria-label={`Open larger preview of ${pet.title}`}
       >
         <img src={pet.url} alt={pet.title} loading="lazy" />
-        <CheckLabel
-          $checked={checked}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggle(pet.id);
-          }}
-          aria-label={checked ? `Remove ${pet.title} from selection` : `Add ${pet.title} to selection`}
-        >
-          <input
-            type="checkbox"
-            checked={checked}
-            readOnly
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-          <CheckBox $checked={checked} aria-hidden="true">
-            {checked ? "✓" : null}
-          </CheckBox>
-          {checked ? "Selected" : "Select"}
-        </CheckLabel>
-        <HeartButton
-          type="button"
-          $active={favorited}
-          $burst={burst}
-          onClick={onHeartClick}
-          aria-label={favorited ? `Unfavorite ${pet.title}` : `Favorite ${pet.title}`}
-          aria-pressed={favorited}
-          title={favorited ? "Unfavorite" : "Favorite"}
-        >
-          <span className="glyph">{favorited ? "♥" : "♡"}</span>
-        </HeartButton>
       </Media>
+      {/* Select + favorite controls are siblings of the image button (not
+          children of it): nesting a <button> inside the <button> Media is
+          invalid HTML, which desyncs React's DOM during scroll-in layout
+          animations and crashes the page. They stay visually over the image
+          via absolute positioning against the relatively-positioned Card. */}
+      <CheckLabel
+        $checked={checked}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggle(pet.id);
+        }}
+        aria-label={checked ? `Remove ${pet.title} from selection` : `Add ${pet.title} to selection`}
+      >
+        <input
+          type="checkbox"
+          checked={checked}
+          readOnly
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+        <CheckBox $checked={checked} aria-hidden="true">
+          {checked ? "✓" : null}
+        </CheckBox>
+        {checked ? "Selected" : "Select"}
+      </CheckLabel>
+      <HeartButton
+        type="button"
+        $active={favorited}
+        $burst={burst}
+        onClick={onHeartClick}
+        aria-label={favorited ? `Unfavorite ${pet.title}` : `Favorite ${pet.title}`}
+        aria-pressed={favorited}
+        title={favorited ? "Unfavorite" : "Favorite"}
+      >
+        <span className="glyph">{favorited ? "♥" : "♡"}</span>
+      </HeartButton>
       <Body>
         <Title>
           <TitleLink to={`/pets/${pet.id}`} state={{ pet }}>

@@ -18,5 +18,13 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // These two are new, aggressive react-hooks rules that flag idiomatic
+      // patterns used here: setState inside an effect (fetch-on-mount, rAF
+      // animation, cache sync) and the "latest callback" ref assignment in
+      // useInfiniteScroll. Both are correct and intentional, so we relax them.
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/refs': 'off',
+    },
   },
 ])

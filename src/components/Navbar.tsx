@@ -1,15 +1,34 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { useFavorites } from "../context/FavoritesContext";
 import { useSelection } from "../context/SelectionContext";
 
-const Bar = styled.header`
+const Bar = styled.header<{ $scrolled: boolean }>`
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: ${({ theme }) => theme.colors.bg};
-  /* No border or shadow on the bar itself  the page surfaces below
-     are the visible elements. */
+  z-index: 20;
+  isolation: isolate;
+
+  /* The frosted background lives on a pseudo-element so its bottom edge can be
+     faded out with a mask: the frost dissolves into the page instead of ending
+     on a hard line, while the logo and links (in .nav-inner above it) stay
+     fully crisp. It also fades in smoothly on scroll. At the very top it's
+     fully transparent, so the bar blends into the gradient with no seam. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: ${({ theme }) => theme.glass.bgStrong};
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+    opacity: ${({ $scrolled }) => ($scrolled ? 1 : 0)};
+    transition: opacity 300ms ease;
+    pointer-events: none;
+  }
 `;
 
 const Inner = styled.div`
@@ -21,6 +40,7 @@ const Inner = styled.div`
   gap: 24px;
   flex-wrap: wrap;
   position: relative;
+  z-index: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 10px 16px;
@@ -43,12 +63,18 @@ const Brand = styled(NavLink)`
     width: 38px;
     height: 38px;
     border-radius: 12px;
-    background: ${({ theme }) => theme.colors.bg};
-    box-shadow: ${({ theme }) => theme.shadows.raisedSmall};
+    background: ${({ theme }) => theme.glass.bgStrong};
+    border: 1px solid ${({ theme }) => theme.glass.border};
+    box-shadow: ${({ theme }) => theme.glass.sheen}, 0 6px 16px rgba(255, 122, 107, 0.18);
     display: grid;
     place-items: center;
     font-size: 18px;
     flex-shrink: 0;
+  }
+  .mark svg {
+    width: 22px;
+    height: 22px;
+    color: ${({ theme }) => theme.colors.accent};
   }
   &:hover { color: ${({ theme }) => theme.colors.accent}; }
 `;
@@ -95,12 +121,31 @@ const Badge = styled.span`
 export function Navbar() {
   const { count } = useSelection();
   const { count: favCount } = useFavorites();
+
+  // Frost the bar once the page has scrolled past the hero so the links stay
+  // legible over photos; stay transparent at the very top to avoid a seam.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <Bar>
+    <Bar $scrolled={scrolled}>
       <Inner>
-        <Brand to="/" aria-label="Pet Gallery home">
-          <span className="mark" aria-hidden="true">🐾</span>
-          Pet Gallery
+        <Brand to="/" aria-label="Pet Folio home">
+          <span className="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="5.5" cy="11" rx="2" ry="2.6" />
+              <ellipse cx="10" cy="7.3" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="7.3" rx="2" ry="2.8" />
+              <ellipse cx="18.5" cy="11" rx="2" ry="2.6" />
+              <path d="M12 12c-2.6 0-4.8 1.8-5.6 3.9-.5 1.3.5 2.6 1.9 2.6.9 0 1.7-.4 2.5-.7.8-.3 1.6-.3 2.4 0 .8.3 1.6.7 2.5.7 1.4 0 2.4-1.3 1.9-2.6C16.8 13.8 14.6 12 12 12z" />
+            </svg>
+          </span>
+          Pet Folio
         </Brand>
         <Links aria-label="Primary">
           <Link to="/" end>

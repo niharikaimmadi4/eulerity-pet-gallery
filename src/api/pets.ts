@@ -13,5 +13,6 @@ export async function fetchPets(signal?: AbortSignal): Promise<Pet[]> {
     ...p,
     id: `${slugify(p.title) || "pet"}-${index}`,
     createdAt: new Date(p.created),
+    order: index,
   }));
 }
